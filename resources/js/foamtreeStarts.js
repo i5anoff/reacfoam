@@ -92,6 +92,18 @@ function foamtreeStarts(groupsData){
         groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].group
     });
 
+    // highlight selected
+    foamtree.set({
+        groupColorDecorator: function (opts, props, vars) {
+            if (props.group.stId == "R-HSA-202403") {
+                console.log("hello");
+                vars.groupColor = "#E86365";
+            }
+        },
+        // Color of the outline stroke for the selected groups
+        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].group
+    });
+
     /*Replacing the costly "expose" animation on double click
      with a simple zoom, which is faster to execute.
      Store references to parent groups*/
