@@ -110,7 +110,7 @@ function foamtreeAnalysis(analysisParam){
                     $(".waiting").hide();
                 }
                 else {
-                    console.log("data not found");
+                    console.log("Data not found");
                 }
         });
     }
