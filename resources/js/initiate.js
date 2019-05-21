@@ -135,9 +135,8 @@ function foamtreeAnalysis(analysisParam){
         error: function () {
             alert("data not found");
 
-            // Remove color and analysis parameter in current url without reloading page
-            var newURL = location.href.split("?")[0];
-            window.history.pushState('object', document.title, newURL);
+            // Remove color and analysis parameter in current url
+            window.location.href = location.href.split("?")[0];
 
             foamtreeLoading();
         }
