@@ -7,7 +7,7 @@ A hierarchical visualisation of Reactome pathways in a voronoi treemap.
 <img width="900" alt="Reacfome_example" align="center"  src="https://user-images.githubusercontent.com/6442828/56794008-2ff19f00-6805-11e9-8537-f454a2b318e5.png">
 
 ## Aim
-  Visualisation of Reactome pathways and pathways analysis results,it's useful for figures, slides, etc. And easy navigation.
+  Visualisation of Reactome pathways and pathways analysis results, it's useful for figures, slides, etc. And easy navigation.
 
 ## Dependency
 
