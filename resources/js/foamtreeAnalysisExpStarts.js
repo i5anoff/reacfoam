@@ -4,6 +4,10 @@
 
 function foamtreeExpStarts(expAnaData, min, max, columnArray) {
 
+    if ( sel !== null){
+        addSel(expAnaData);
+    }
+
     // Basic definitions
     var foamtree = new CarrotSearchFoamTree({
         id: "visualization",
@@ -77,48 +81,17 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         }
     });
 
-    /*Replacing the costly "expose" animation on double click
-     with a simple zoom, which is faster to execute.
-     Store references to parent groups*/
-    foamtree.set({
-        onModelChanging: function addParent(group, parent) {
-            if (!group) { return; }
-            group.parent = parent;
-            if (group.groups) {
-                group.groups.forEach(function(g) {
-                    addParent(g, group);
-                });
-            }
-        },
-        onGroupDoubleClick: function(e) {
-            e.preventDefault();
-            var group = e.secondary ? e.bottommostOpenGroup : e.topmostClosedGroup;
-            var toZoom;
-            if (group) {
-                // Open on left-click, close on right-click
-                this.open({
-                    groups: group,
-                    open: !e.secondary
-                });
-                toZoom = e.secondary ? group.parent : group;
-            } else {
-                toZoom = this.get("dataObject");
-            }
-            this.zoom(toZoom);
-        }
-    });
-
     // Display hints
     CarrotSearchFoamTree.hints(foamtree);
 
     // Set color base on pValue range and columns value
     function setColor(column){
         foamtree.set({
-            groupColorDecorator: function (opts, params, vars) {
-                if (typeof params.group.exp != "undefined") {
+            groupColorDecorator: function (opts, props, vars) {
+                if (typeof props.group.exp != "undefined") {
 
-                    var coverage = params.group.exp[column];
-                    var pValue = params.group.pValue;
+                    var coverage = props.group.exp[column];
+                    var pValue = props.group.pValue;
                     var ratio = 1 - ((coverage - min) / (max - min));
                     var colorValue = threeGradient(ratio, colorMaxExpInBar, colorMinExpInBar, colorStopExpInBar);
 
@@ -135,8 +108,12 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
                 } else {
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
                 }
+                // Add flag color
+                if (props.group.flg){
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
+                }
             },
-            groupSelectionOutlineColor: ColorProfileEnum.properties[profileSelected].hit
+            groupSelectionOutlineColor: ColorProfileEnum.properties[profileSelected].selection
         });
         // Schedule a redraw to draw the new colors
         window.setTimeout(foamtree.redraw, 0);

@@ -4,6 +4,10 @@
 
 function foamtreeStarts(groupsData){
 
+    if ( sel !== null){
+        addSel(groupsData);
+    }
+
     var foamtree = new CarrotSearchFoamTree({
         id: "visualization",
         stacking: "flattened",
@@ -82,57 +86,19 @@ function foamtreeStarts(groupsData){
             if (props.hasChildren && props.browseable === false) {
                 vars.groupColor = "#E86365";
                 vars.labelColor = "#000";
-            } else {
+            }
+            // Add flag if it exists
+            else if(props.group.flg){
+                vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
+                vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
+            } else{
                 // Check in the Enum to get value and to change profileSelected
                 vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
                 vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
             }
         },
         // Color of the outline stroke for the selected groups
-        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].group
-    });
-
-    // highlight selected
-    foamtree.set({
-        groupColorDecorator: function (opts, props, vars) {
-            if (props.group.stId == "R-HSA-202403") {
-                console.log("hello");
-                vars.groupColor = "#E86365";
-            }
-        },
-        // Color of the outline stroke for the selected groups
-        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].group
-    });
-
-    /*Replacing the costly "expose" animation on double click
-     with a simple zoom, which is faster to execute.
-     Store references to parent groups*/
-    foamtree.set({
-        onModelChanging: function addParent(group, parent) {
-            if (!group) { return; }
-            group.parent = parent;
-            if (group.groups) {
-                group.groups.forEach(function(g) {
-                    addParent(g, group);
-                });
-            }
-        },
-        onGroupDoubleClick: function(e) {
-            e.preventDefault();
-            var group = e.secondary ? e.bottommostOpenGroup : e.topmostClosedGroup;
-            var toZoom;
-            if (group) {
-                // Open on left-click, close on right-click
-                this.open({
-                    groups: group,
-                    open: !e.secondary
-                });
-                toZoom = e.secondary ? group.parent : group;
-            } else {
-                toZoom = this.get("dataObject");
-            }
-            this.zoom(toZoom);
-        }
+        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
     });
 
     CarrotSearchFoamTree.hints(foamtree);

@@ -71,7 +71,7 @@ function getData(data, topData) {
     function addValueToChildren(group) {
         if (group.groups && group.groups.length >= 0) {
             group.groups.forEach(addValueToChildren);
-
+            // TODO define a variable
             for (var i = 0; i < group.groups.length; i++) {
                 // Delete form (parent key) in arrary
                 delete group.groups[i].from;

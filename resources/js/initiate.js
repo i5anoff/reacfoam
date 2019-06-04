@@ -14,26 +14,7 @@ window.addEventListener("load", function(){
 function foamtreeLoading(){
 
     $(".waiting").show();
-
-    $.when(
-        $.getJSON(speciesDataLocation, function(data) {
-            speciesData = data;
-        }),
-        $.getJSON(topSpeciesDataLocation, function(topData) {
-            topSpeciesData = topData;
-        })
-    ).then(function() {
-            if ( typeof speciesData && topSpeciesData !== "undefined") {
-
-                datasetInFoamtree = getData(speciesData, topSpeciesData);
-
-                foamtreeStarts(datasetInFoamtree);
-                $(".waiting").hide();
-            }
-            else {
-                console.log("data not found");
-            }
-    })
+    foamtreeWithFlg(flg,speciesDataLocation,topSpeciesDataLocation);
 }
 
 function foamtreeAnalysis(analysisParam){
@@ -47,25 +28,7 @@ function foamtreeAnalysis(analysisParam){
             responseFromToken[val.stId] = val.entities.pValue;
         });
 
-        $.when(
-            $.getJSON(speciesDataLocation, function(data) {
-                speciesData = data;
-            }),
-            $.getJSON(topSpeciesDataLocation, function(topData) {
-                topSpeciesData = topData;
-            })
-        ).then(function() {
-                if (speciesData && topSpeciesData) {
-
-                    var defaultFoamtreeData = getData(speciesData, topSpeciesData);
-
-                    var anaData = addAnaResult(responseFromToken, analysisParam, defaultFoamtreeData);
-
-                    foamtreeAnalysisStarts(anaData);
-
-                    $(".waiting").hide();
-                }
-        });
+        foamtreeAnaWithFlg(flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken, analysisParam );
     }
 
     function extractExpDataFromToken(response) {
@@ -93,32 +56,12 @@ function foamtreeAnalysis(analysisParam){
         var min = response.expressionSummary.min;
         var max = response.expressionSummary.max;
 
-        $.when(
-            $.getJSON(speciesDataLocation, function(data) {
-                speciesData = data;
-            }),
-            $.getJSON(topSpeciesDataLocation, function(topData) {
-                topSpeciesData = topData;
-            })
-        ).then(function() {
-                if (speciesData && topSpeciesData) {
-
-                    var defaultFoamtreeData = getData(speciesData, topSpeciesData);
-                    var anaGroupsData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, defaultFoamtreeData);
-
-                    foamtreeExpStarts( anaGroupsData, min, max, columnArray);
-                    $(".waiting").hide();
-                }
-                else {
-                    console.log("Data not found");
-                }
-        });
+        foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray);
     }
+
     $.ajax({
         // TODO PARSE FILTER PARAM -- FILTER=pValue:0.88$species:9606
-        //url: "/AnalysisService/token/" + analysisParam + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource=TOTAL",
-        url: "https://dev.reactome.org/AnalysisService/token/" + analysisParam + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource=TOTAL",
-
+        url: "/AnalysisService/token/" + analysisParam + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource=TOTAL",
         dataType: "json",
         type: "GET",
         beforeSend:  function() {

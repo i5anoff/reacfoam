@@ -14,15 +14,16 @@ var ColorProfileEnum = {
     BARIUM_LITHIUM: 3,
     CALCIUM_SALTS: 4,
     properties: {
-        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
-        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
-        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", min: "#A0A0A0", max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
-        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", min: "#934A00", max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
+        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
+        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
+        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", selection: "#BBBBFF", flag: "#FF00FF", min: "#A0A0A0", max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
+        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", selection: "#BBBBFF", flag: "#FF00FF", min: "#934A00", max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
     }
 };
 
 var SPECIES_MAP = {
     "48887" : "Homo_sapiens"
+    //"48898" : "Bos_taurus"
 };
 
 // Get parameters from URL and save data as key => value pair
@@ -34,7 +35,7 @@ function getUrlVars() {
     return vars
 }
 
-// Get species info from url and fetch the data file locally
+// Get species id from url and fetch the data file locally
 var speciesData, topSpeciesData, datasetInFoamtree;
 var speciesIdFromUrl = typeof getUrlVars()["species"] !== "undefined" ? getUrlVars()["species"] : 48887;
 var speciesValue = SPECIES_MAP[speciesIdFromUrl];
@@ -43,11 +44,16 @@ var Homo_sapiens = "Homo_sapiens";
 var speciesDataLocation =  typeof speciesValue !== "undefined" && speciesIdFromUrl in SPECIES_MAP ? "resources/dataset/fireworks/" + speciesValue + ".json" : "resources/dataset/fireworks/" + Homo_sapiens + ".json";
 var topSpeciesDataLocation = typeof speciesValue !== "undefined" && speciesIdFromUrl in SPECIES_MAP ? "resources/dataset/toplevel/" + speciesValue + ".json" : "resources/dataset/toplevel/" + Homo_sapiens + ".json";
 
+// Get color profile from url
 var colorParam =  getUrlVars()["color"];
 var profileSelected = typeof colorParam !== "undefined" && colorParam.toUpperCase().replace(/%20/g,"_") in ColorProfileEnum ? ColorProfileEnum[colorParam.toUpperCase().replace(/%20/g,"_")] : ColorProfileEnum.COPPER;
 var colorMaxExpInBar = ColorProfileEnum.properties[profileSelected].min_exp;
 var colorMinExpInBar = ColorProfileEnum.properties[profileSelected].max_exp;
 var colorStopExpInBar = ColorProfileEnum.properties[profileSelected].stop_exp;
+
+// Get selected stId from url
+var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
+var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
@@ -179,4 +185,247 @@ function addAnaResult(dataFromToken, token, defaultFoamtreeData){
 
     return defaultFoamtreeData
 }
+
+// Add selected pathway
+function addSel(defaultFoamtreeData){
+
+    defaultFoamtreeData.forEach(addSelToGroup);
+
+    function addSelToGroup(group) {
+        // Add selected mark to level 1
+        if (group.stId == sel){
+            Object.assign (group, {'selected': true })
+        }
+        // Add selected mark to child level
+        if (group.groups && group.groups.length > 0) {
+            group.groups.forEach(addSelToGroup);
+            for (var i =0; i < group.groups.length; i++){
+                if ([group.groups[i].stId] == sel) {
+                    Object.assign( group.groups[i], {'selected': true });
+                }
+            }
+        }
+    }
+}
+
+// Add overrepresentation data analysis result to default data
+function addFlg(dataFromToken, defaultFoamtreeData){
+
+    // Find all path by stId and generate a new array with all stIds
+    var stIdArray = [];
+    dataFromToken.forEach(function (item) {
+       var array = findPathBystId(item, defaultFoamtreeData);
+        stIdArray = stIdArray.concat(array)
+    });
+
+    //var countFlaggedItems = Array.from(new Set(stIdArray));
+
+    // Create a stId object and save as key : value pair stId : stId
+    var stIdObj = {};
+    stIdArray.forEach(function (item) {
+        stIdObj[item] = item
+    });
+
+    // Add flg to group
+    defaultFoamtreeData.forEach(addFlgToGroup);
+    function addFlgToGroup(group) {
+
+        // Add flg mark to top 1 level
+        if (stIdObj[group.stId]){
+            Object.assign (group, {'flg': true})
+        }
+
+        // Add flg mark to child hierarchical level
+        if (group.groups && group.groups.length > 0) {
+            group.groups.forEach(addFlgToGroup);
+
+            for (var i =0; i < group.groups.length; i++){
+                if (stIdObj[group.groups[i].stId]) {
+                    Object.assign( group.groups[i], {'flg': true });
+                }
+            }
+        }
+    }
+
+    return defaultFoamtreeData
+}
+
+function findPathBystId(stId, obj, path) {
+
+    // For recursive, do not assign value to it
+    path =  path === undefined ? [] : path;
+
+    for(var i = 0; i < obj.length; i++) {
+        var tmpPath = path.concat();
+        tmpPath.push(obj[i].stId);
+
+        if(stId == obj[i].stId) {
+            return tmpPath;
+        }
+        if(obj[i].groups) {
+            var findResult = findPathBystId(stId, obj[i].groups, tmpPath);
+            if(findResult) {
+                return findResult;
+            }
+        }
+    }
+}
+
+// Default foamtree
+function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
+
+    var flagStId = [];
+    // Ajax calls container
+    var deferreds = [];
+
+    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
+        speciesData = data;
+    });
+    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
+        topSpeciesData = topData;
+    });
+
+    // Add flag pathways conditionally and push to Ajax calls array
+    if(flg !== null){
+        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+            data.llps.forEach(function(val) {
+                flagStId.push(val);
+            });
+        });
+        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+    } else {
+        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    }
+    $.when.apply( $, deferreds)// Same as $.when.apply( dfSpeciesData, dfTopSpeciesData, dfFlag )
+        .then( function(){
+            if ( typeof speciesData && topSpeciesData !== "undefined") {
+                datasetInFoamtree = getData(speciesData, topSpeciesData);
+
+                if(flg !== null){
+                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
+                    foamtreeStarts(foamtreeDataWithFlg);
+                    $(".waiting").hide();
+                } else {
+                    foamtreeStarts( datasetInFoamtree);
+                    $(".waiting").hide();
+                }
+            }
+        }
+    );
+}
+
+// Overrepresentation analysis
+function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
+
+    var flagStId = [];
+    var deferreds = [];
+
+    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
+        speciesData = data;
+    });
+    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
+        topSpeciesData = topData;
+    });
+
+    if(flg !== null){
+        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+            data.llps.forEach(function(val) {
+                flagStId.push(val);
+            });
+        });
+        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+    } else{
+        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    }
+    $.when.apply( $, deferreds)
+        .then( function(){
+            if ( typeof speciesData && topSpeciesData !== "undefined") {
+
+                datasetInFoamtree = getData(speciesData, topSpeciesData);
+
+                if(flg !== null){
+                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
+                    var anaData = addAnaResult(responseFromToken, analysisParam, foamtreeDataWithFlg);
+                    foamtreeAnalysisStarts(anaData);
+                    $(".waiting").hide();
+                } else {
+                    var anaDataNoFlg = addAnaResult(responseFromToken, analysisParam, datasetInFoamtree);
+                    foamtreeAnalysisStarts(anaDataNoFlg);
+                    $(".waiting").hide();
+                }
+            }
+        }
+    );
+}
+
+// Expression analysis
+function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+
+    var flagStId = [];
+    var deferreds = [];
+
+    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
+        speciesData = data;
+    });
+    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
+        topSpeciesData = topData;
+    });
+
+    if(flg){
+        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+            data.llps.forEach(function(val) {
+                flagStId.push(val);
+            });
+        });
+        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+    } else{
+        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    }
+
+    $.when.apply( $, deferreds)
+        .then( function(){
+            if ( typeof speciesData && topSpeciesData !== "undefined") {
+
+                datasetInFoamtree = getData(speciesData, topSpeciesData);
+
+                if(flg !== null){
+                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
+                    var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
+                    foamtreeExpStarts( anaExpData, min, max, columnArray);
+                    $(".waiting").hide();
+                } else {
+                    var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
+                    foamtreeExpStarts( anaExpDataNoFlg, min, max, columnArray);
+                    $(".waiting").hide();
+                }
+            }
+        }
+    );
+}
+
+
+// TODO delete below
+function getFlg(flg, defaultFoamtreeData){
+
+    function getStId(data){
+        var flagStId = [];
+        data.llps.forEach(function(val) {
+            flagStId.push(val);
+        });
+        addFlg(flagStId, defaultFoamtreeData);
+    }
+
+    $.ajax({
+        type: "GET",
+        url: "https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=Homo%20sapiens",
+        success: function(xml) {
+            getStId(xml);
+        },
+        error: function () {
+            alert("Unable to flag query " + flg + " analysis");
+        }
+    });
+}
+
+
 
