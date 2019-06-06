@@ -15,12 +15,15 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
 
         stacking: "flattened",
 
-        //Attach and draw a maximum of 8 levels of groups
+        // The duration of the group exposure and unexposure animation.
+        exposeDuration: 500,
+
+        // Attach and draw a maximum of 8 levels of groups
         maxGroupLevelsAttached: 12,
         maxGroupLevelsDrawn: 12,
         maxGroupLabelLevelsDrawn: 12,
 
-        //maximum duration of a complete high-quality redraw of the visualization
+        // Maximum duration of a complete high-quality redraw of the visualization
         finalCompleteDrawMaxDuration: 50000,
         finalIncrementalDrawMaxDuration: 50000,
         wireframeDrawMaxDuration: 5000,

@@ -13,6 +13,9 @@ function foamtreeAnalysisStarts(anaData) {
         stacking: "flattened",
         pixelRatio: window.devicePixelRatio || 1,
 
+        // The duration of the group exposure and unexposure animation.
+        exposeDuration: 500,
+
         // Lower groupMinDiameter to fit as many groups as possible
         groupMinDiameter: 0,
 
