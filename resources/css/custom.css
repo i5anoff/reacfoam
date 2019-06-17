@@ -282,7 +282,7 @@ body {
     background-color: #5491d2;
 }
 
-/* bottomPanel media queries */
+/* start media queries */
 @media  only screen and (max-width: 1024px) {
     .bars{
         flex-direction: column-reverse;
@@ -331,13 +331,7 @@ body {
     #columnNames span {
         margin: 5px 1px 0 25px;
     }
-    #flagBar span {
-        width: 240px;
-    }
 }
-/* end bottomPanel media queries */
-
-/* hint media queries */
 @media  only screen and (max-width: 570px) {
     .visualization-hint {
         word-break: break-word;
@@ -426,7 +420,6 @@ body {
         height: 85%;
     }
 }
-/* end hint media queries */
 
 @media only screen and (orientation: landscape) {
     .visualization-help dl {
@@ -447,4 +440,11 @@ body {
     .visualization-help dl {
         margin: 0 0 1px 0;
     }
+    #flagBar span {
+      width:240px;
+    }
+    .bottomPanel {
+      margin-left: 115px;
+    }
 }
+/* end media queries */
