@@ -82,27 +82,30 @@ function foamtreeStarts(groupsData){
     });
 
     // Switching color profiles by color param from url and save to profileSelected
-    foamtree.set({
-        groupColorDecorator: function (opts, props, vars) {
-            // If child groups of some group don't have enough space to
-            // render, draw the parent group in red.
-            if (props.hasChildren && props.browseable === false) {
-                vars.groupColor = "#E86365";
-                vars.labelColor = "#000";
-            }
-            // Add flag if it exists
-            else if(props.group.flg){
-                vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
-                vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
-            } else{
-                // Check in the Enum to get value and to change profileSelected
-                vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
-                vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
-            }
-        },
-        // Color of the outline stroke for the selected groups
-        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
-    });
+    function setColor(flg){
+        foamtree.set({
+            groupColorDecorator: function (opts, props, vars) {
+                // If child groups of some group don't have enough space to
+                // render, draw the parent group in red.
+                if (props.hasChildren && props.browseable === false) {
+                    vars.groupColor = "#E86365";
+                    vars.labelColor = "#000";
+                }
+                // Add flag if it exists
+                else if(props.group.flg && flg){
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
+                    vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
+                } else{
+                    // Check in the Enum to get value and to change profileSelected
+                    vars.groupColor = ColorProfileEnum.properties[profileSelected].group;
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
+                }
+            },
+            // Color of the outline stroke for the selected groups
+            groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
+        });
+    }
+    setColor(flg);
 
     CarrotSearchFoamTree.hints(foamtree);
 
@@ -135,4 +138,32 @@ function foamtreeStarts(groupsData){
             timeout = window.setTimeout(foamtree.resize, 300);
         }
     })());
+
+    // Add flag bar
+    if (flg !== null){
+        $("#flagBar").show();
+        var span = document.createElement("span");
+        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
+        span.appendChild(textnode);
+        flagPathway.appendChild(span);
+    }
+
+    // Clear flag and redraw foamtree
+    $("button[name=clearFlg]").click(function () {
+
+        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
+        window.history.pushState(null, null, url);
+
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(flgAfterClear);
+        foamtree.redraw();
+
+        $("#flagBar").hide();
+    });
+
+    // Enable browser when after using pushstate
+    window.addEventListener("popstate", function() {
+        window.location.href = location.href;
+    });
+
 }

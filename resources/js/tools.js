@@ -54,6 +54,7 @@ var colorStopExpInBar = ColorProfileEnum.properties[profileSelected].stop_exp;
 // Get selected stId from url
 var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
 var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+var countFlaggedItems;
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
@@ -218,7 +219,8 @@ function addFlg(dataFromToken, defaultFoamtreeData){
         stIdArray = stIdArray.concat(array)
     });
 
-    //var countFlaggedItems = Array.from(new Set(stIdArray));
+    // Remove duplicated item in array
+    countFlaggedItems = Array.from(new Set(stIdArray)).length;
 
     // Create a stId object and save as key : value pair stId : stId
     var stIdObj = {};
@@ -401,30 +403,6 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
             }
         }
     );
-}
-
-
-// TODO delete below
-function getFlg(flg, defaultFoamtreeData){
-
-    function getStId(data){
-        var flagStId = [];
-        data.llps.forEach(function(val) {
-            flagStId.push(val);
-        });
-        addFlg(flagStId, defaultFoamtreeData);
-    }
-
-    $.ajax({
-        type: "GET",
-        url: "https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=Homo%20sapiens",
-        success: function(xml) {
-            getStId(xml);
-        },
-        error: function () {
-            alert("Unable to flag query " + flg + " analysis");
-        }
-    });
 }
 
 

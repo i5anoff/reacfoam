@@ -201,9 +201,16 @@ body {
     width: 100%;
 }
 
+.bars {
+    display: flex;
+    justify-content: center;
+}
+
 #layout {
-    margin-left: 10px;
-    width:40%;
+    margin-left: 14px;
+    font-size: 14px;
+    position: absolute;
+    bottom: 15px;
 }
 #expressionBar {
     text-align: center;
@@ -214,9 +221,10 @@ body {
     width: 400px;
     height: 30px;
     border-radius: 5px;
+    margin: 0 5px;
 }
 
-#expressionBar button {
+#expressionBar button, #flagBar button{
     background-color: #58c3e5;
     color: white;
     height: 24px;
@@ -246,35 +254,88 @@ body {
     max-width: 205px;
 }
 
+#flagBar {
+    text-align: center;
+    display: flex;
+    position: relative;
+    background-color: rgba(240, 240, 240, 0.9);
+    border: 1px solid lightgray;
+    width: 320px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+#flagBar span {
+    margin: 5px 0 0 10px;
+    float: left;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 280px;
+    width: 300px;
+    text-align: left;
+}
+
 .buttonInExpBar:hover {
     background-color: #5491d2;
 }
 
-/* expression bar media queries */
-@media  only screen and (max-width: 700px) {
+/* bottomPanel media queries */
+@media  only screen and (max-width: 1024px) {
+    .bars{
+        flex-direction: column-reverse;
+    }
     #expressionBar {
-        margin: 10px 0 0 10px;
+        margin: 0 0;
+    }
+    #flagBar {
+        bottom:5px;
+    }
+    #container{
+        bottom: 80px;
+        height: 90%;
     }
     .bottomPanel {
-        display:block
+        bottom: 20px;
+    }
+    #layout {
+        width: 100%;
+        bottom: 0;
+        margin-left: 0;
+    }
+    .layout-align {
+        text-align: center;
     }
 }
 
-@media only screen and (max-width: 450px) {
-    #expressionBar {
-        width: 340px;
-    }
-    #layout{
-        display:flex;
+@media  only screen and (max-width: 768px) {
+    #container{
+        height: 85%;
     }
 }
 
-@media only screen and (max-width: 320px) {
+@media only screen and (max-height: 768px) and (orientation: landscape) {
+    .bars {
+        flex-direction: row;
+    }
+    #flagBar {
+        bottom: 0 ;
+        margin: 0 5px;
+    }
     #expressionBar {
-        width: 300px;
+        width:260px;
+        margin-left: 35px;
+    }
+    #columnNames span {
+        margin: 5px 1px 0 25px;
+    }
+    #flagBar span {
+        width: 240px;
     }
 }
-/* end column bar media queries */
+/* end bottomPanel media queries */
 
 /* hint media queries */
 @media  only screen and (max-width: 570px) {
@@ -288,6 +349,23 @@ body {
     .visualization-hint .info{
         top: 6px;
     }
+    .bars {
+        display: flex;
+        margin-left: 15px;
+    }
+}
+
+@media  only screen and (max-width: 450px) {
+    #expressionBar {
+        width: 310px;
+    }
+    .bars {
+        display: flex;
+        margin-left: 15px;
+    }
+    #columnNames span {
+        margin: 5px 1px 0 40px;
+    }
 }
 
 @media only screen and (max-width: 425px) {
@@ -300,6 +378,15 @@ body {
     }
     .visualization-hint .info{
         top: 6px;
+    }
+    #container{
+        height: 82%;
+    }
+}
+
+@media  only screen and (max-width: 375px) {
+    #container{
+        height: 82%;
     }
 }
 
@@ -321,6 +408,23 @@ body {
     .visualization-help dl {
         margin: 0 0 1px 0;
     }
+    .bottomPanel {
+        flex-direction: column;
+    }
+    .bars{
+        display:contents
+    }
+    #expressionBar {
+        margin-left: 15px;
+        width: 320px;
+    }
+    #flagBar {
+        margin-left: 15px;
+        bottom:0
+    }
+    #container{
+        height: 85%;
+    }
 }
 /* end hint media queries */
 
@@ -329,6 +433,13 @@ body {
         margin: 0 0 1px 0;
     }
 }
+
+@media only screen and (max-height: 411px) and (orientation: landscape) {
+    #container {
+        height: 85%;
+    }
+}
+
 @media only screen and (max-height: 320px) and (orientation: landscape) {
     .visualization-help {
         padding-top: 10px;

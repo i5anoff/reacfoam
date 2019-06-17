@@ -88,7 +88,7 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     CarrotSearchFoamTree.hints(foamtree);
 
     // Set color base on pValue range and columns value
-    function setColor(column){
+    function setColor(column, flgNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
                 if (typeof props.group.exp != "undefined") {
@@ -112,8 +112,10 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
                 }
                 // Add flag color
-                if (props.group.flg){
+                if (props.group.flg && flgNew){
                     vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
+                } else{
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
                 }
             },
             groupSelectionOutlineColor: ColorProfileEnum.properties[profileSelected].selection
@@ -141,7 +143,7 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     // Get the first item in columnNames
     var columnFirst = divs.eq(now).show().attr('value');
     // Use the first item as default coverage value
-    setColor(columnFirst);
+    setColor(columnFirst, flg);
 
     // Prev and next button color control
     $("button[name=next]").click(function () {
@@ -149,7 +151,8 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         now = (now + 1 < divs.length) ? now + 1 : 0;
         divs.eq(now).show(); // show next
         var column = divs.eq(now).show().attr('value');
-        setColor(column);
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(column, flgAfterClear);
     });
 
     $("button[name=prev]").click(function () {
@@ -157,7 +160,8 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         now = (now > 0) ? now - 1 : divs.length - 1;
         divs.eq(now).show();
         var column = divs.eq(now).show().attr('value');
-        setColor(column);
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(column, flgAfterClear);
     });
 
     // Switching views
@@ -214,7 +218,32 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     // Colse button control
     $("button[name=close]").click(function () {
         $("#expressionBar").hide();
+        //TODO if flag exists
         window.location.href = location.href.split("?")[0];
     });
+    // Add flag bar
+    if (flg !== null){
+        $("#flagBar").show();
+        var span = document.createElement("span");
+        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
+        span.appendChild(textnode);
+        flagPathway.appendChild(span);
+    }
+    // Clear flag and redraw foamtree
+    $("button[name=clearFlg]").click(function () {
 
+        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
+        window.history.pushState(null, null, url);
+
+        var column = divs.eq(now).show().attr('value');
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(column, flgAfterClear);
+
+        $("#flagBar").hide();
+
+    });
+    // Enable browser when after using pushstate
+    window.addEventListener("popstate", function() {
+        window.location.href = location.href;
+    });
 }

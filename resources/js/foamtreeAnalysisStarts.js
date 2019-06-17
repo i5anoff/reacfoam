@@ -84,38 +84,43 @@ function foamtreeAnalysisStarts(anaData) {
     CarrotSearchFoamTree.hints(foamtree);
 
     // Switching color profiles by color param from url and save to profileSelected
-    foamtree.set({
-        groupColorDecorator: function (opts, props, vars) {
-            var pValue = props.group.pValue;
-            var colorTopInBar = ColorProfileEnum.properties[profileSelected].min;
-            var colorBottomInBar = ColorProfileEnum.properties[profileSelected].max;
-            var ratio = pValue / 0.05;
-            var colorValue = twoGradient(ratio, colorBottomInBar, colorTopInBar);
+    function setColor(flgNew){
+        foamtree.set({
+            groupColorDecorator: function (opts, props, vars) {
+                var pValue = props.group.pValue;
+                var colorTopInBar = ColorProfileEnum.properties[profileSelected].min;
+                var colorBottomInBar = ColorProfileEnum.properties[profileSelected].max;
+                var ratio = pValue / 0.05;
+                var colorValue = twoGradient(ratio, colorBottomInBar, colorTopInBar);
 
-            // Calculate color gradient base on the range of pValue 0~0.5
-            if (pValue !== undefined && pValue >= 0 && pValue <= 0.05) {
-                vars.groupColor.r = colorValue.red;
-                vars.groupColor.g = colorValue.green;
-                vars.groupColor.b = colorValue.blue;
+                // Calculate color gradient base on the range of pValue 0~0.5
+                if (pValue !== undefined && pValue >= 0 && pValue <= 0.05) {
+                    vars.groupColor.r = colorValue.red;
+                    vars.groupColor.g = colorValue.green;
+                    vars.groupColor.b = colorValue.blue;
 
-                vars.groupColor.model = "rgb";
+                    vars.groupColor.model = "rgb";
 
-            } else if (pValue !== undefined && pValue >= 0.05 ) {
-                // Coverage defined, but greater than range
-                vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
-            }
-            else {
-                // Coverage not defined
-                vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
-            }
-            // Add flag color
-            if (props.group.flg){
-                vars.labelColor =ColorProfileEnum.properties[profileSelected].flag;
-            }
-        },
-        // Color of the outline stroke for the selected groups
-        groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
-    });
+                } else if (pValue !== undefined && pValue >= 0.05 ) {
+                    // Coverage defined, but greater than range
+                    vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
+                }
+                else {
+                    // Coverage not defined
+                    vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
+                }
+                // Add flag color
+                if (props.group.flg && flgNew){
+                    vars.labelColor =ColorProfileEnum.properties[profileSelected].flag;
+                }else{
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
+                }
+            },
+            // Color of the outline stroke for the selected groups
+            groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
+        });
+    }
+    setColor(flg);
 
     // Switching views
     document.addEventListener("click", function (e) {
@@ -145,4 +150,28 @@ function foamtreeAnalysisStarts(anaData) {
             timeout = window.setTimeout(foamtree.resize, 300);
         }
     })());
+
+    // Add flag bar
+    if (flg !== null){
+        $("#flagBar").show();
+        var span = document.createElement("span");
+        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
+        span.appendChild(textnode);
+        flagPathway.appendChild(span);
+    }
+    // Clear flag and redraw foamtree
+    $("button[name=clearFlg]").click(function () {
+        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
+        window.history.pushState(null, null, url);
+
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(flgAfterClear);
+        foamtree.redraw();
+
+        $("#flagBar").hide();
+    });
+    // Enable browser when after using pushstate
+    window.addEventListener("popstate", function() {
+        window.location.href = location.href;
+    });
 }
