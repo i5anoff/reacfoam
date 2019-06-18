@@ -211,6 +211,7 @@ body {
     font-size: 14px;
     position: absolute;
     bottom: 15px;
+    z-index:1;
 }
 #expressionBar {
     text-align: center;
