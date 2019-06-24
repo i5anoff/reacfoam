@@ -14,10 +14,10 @@ var ColorProfileEnum = {
     BARIUM_LITHIUM: 3,
     CALCIUM_SALTS: 4,
     properties: {
-        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
-        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
-        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", selection: "#BBBBFF", flag: "#FF00FF", min: "#A0A0A0", max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
-        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", selection: "#BBBBFF", flag: "#FF00FF", min: "#934A00", max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
+        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
+        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
+        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", selection: "#BBBBFF", flag: "#FF00FF", min: "#A0A0A0", stop: null, max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
+        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", selection: "#BBBBFF", flag: "#FF00FF", min: "#934A00", stop: null, max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
     }
 };
 
@@ -47,9 +47,14 @@ var topSpeciesDataLocation = typeof speciesValue !== "undefined" && speciesIdFro
 // Get color profile from url
 var colorParam =  getUrlVars()["color"];
 var profileSelected = typeof colorParam !== "undefined" && colorParam.toUpperCase().replace(/%20/g,"_") in ColorProfileEnum ? ColorProfileEnum[colorParam.toUpperCase().replace(/%20/g,"_")] : ColorProfileEnum.COPPER;
-var colorMaxExpInBar = ColorProfileEnum.properties[profileSelected].min_exp;
-var colorMinExpInBar = ColorProfileEnum.properties[profileSelected].max_exp;
-var colorStopExpInBar = ColorProfileEnum.properties[profileSelected].stop_exp;
+var colorMinExp = ColorProfileEnum.properties[profileSelected].min_exp;
+var colorMaxExp = ColorProfileEnum.properties[profileSelected].max_exp;
+var colorStopExp = ColorProfileEnum.properties[profileSelected].stop_exp;
+
+
+var colorMin = ColorProfileEnum.properties[profileSelected].min;
+var colorMax = ColorProfileEnum.properties[profileSelected].max;
+var colorStop = ColorProfileEnum.properties[profileSelected].stop;
 
 // Get selected stId from url
 var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
@@ -119,7 +124,7 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
     defaultFoamtreeData.forEach(addExpToGroup);
     function addExpToGroup(group) {
         // Add Exp to top 1 level
-        columnNameResponse[group.stId] ? Object.assign(group, {'exp': columnNameResponse[group.stId]}) : Object.assign(group, {'exp': undefined});
+        columnNameResponse[group.stId] ? Object.assign(group, {'exp': columnNameResponse[group.stId]}) : Object.assign(group, {'exp': null});
 
         // Add Exp to child hierarchical level
         if (group.groups && group.groups.length > 0) {
@@ -129,7 +134,7 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
                 if (columnNameResponse[group.groups[i].stId]) {
                     group.groups[i] = Object.assign(group.groups[i], {'exp': columnNameResponse[group.groups[i].stId]});
                 } else {
-                    group.groups[i] = Object.assign(group.groups[i], {'exp': undefined});
+                    group.groups[i] = Object.assign(group.groups[i], {'exp': null});
                 }
             }
         }
@@ -140,7 +145,7 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
     function addPvalueAndUrlToGroup(group) {
 
         // Add pValue and analysis url top 1 level
-        pvalueResponse[group.stId] ? Object.assign(group, {'pValue': pvalueResponse[group.stId], 'url': group.url + "&DTAB=AN&ANALYSIS=" + token}) : Object.assign(group, {'pValue': undefined, 'url': group.url + "&DTAB=AN&ANALYSIS=" + token});
+        pvalueResponse[group.stId] ? Object.assign(group, {'pValue': pvalueResponse[group.stId], 'url': group.url + "&DTAB=AN&ANALYSIS=" + token}) : Object.assign(group, {'pValue': null, 'url': group.url + "&DTAB=AN&ANALYSIS=" + token});
 
         // Add pValue and analysis url to child hierarchical level
         if (group.groups && group.groups.length > 0) {
@@ -150,7 +155,7 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
                 if (pvalueResponse[group.groups[i].stId]) {
                     group.groups[i] = Object.assign( group.groups[i],{'pValue': pvalueResponse[group.groups[i].stId], 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
                 } else {
-                    group.groups[i] = Object.assign(group.groups[i],{'pValue': undefined });
+                    group.groups[i] = Object.assign(group.groups[i],{'pValue': null });
                 }
             }
         }
@@ -168,7 +173,7 @@ function addAnaResult(dataFromToken, token, defaultFoamtreeData){
     function addPvalueAndUrlToGroup(group) {
 
         // Add pValue and analysis url top 1 level
-        dataFromToken[group.stId] ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': undefined, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
+        dataFromToken[group.stId] ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': null, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
 
         // Add pValue and analysis url to child hierarchical level
         if (group.groups && group.groups.length > 0) {
@@ -178,7 +183,7 @@ function addAnaResult(dataFromToken, token, defaultFoamtreeData){
                 if (dataFromToken[group.groups[i].stId]) {
                     Object.assign( group.groups[i], {'pValue': dataFromToken[group.groups[i].stId],'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
                 } else {
-                    Object.assign( group.groups[i], {'pValue': undefined, 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
+                    Object.assign( group.groups[i], {'pValue': null, 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
                 }
             }
         }
@@ -405,5 +410,92 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
+function createCanvasNoStroke(colorMin,colorStop,colorMax){
+    var canvas = document.getElementById('legendCanvas');
+    var ctx = canvas.getContext('2d');
+
+    var gradient = ctx.createLinearGradient(0,0,25,200);
+
+    gradient.addColorStop(0, colorMin);
+    gradient.addColorStop(1, colorMax);
+
+    if (colorStop){
+        gradient.addColorStop(0.5, colorStop);
+    }
+    ctx.clearRect(0, 0, 50,200);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 25, 200);
+}
+
+function createCanvas(y, colorMin ,colorStop, colorMax){
+    var canvas = document.getElementById('legendCanvas');
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(0,0,25,200);
+
+    gradient.addColorStop(0, colorMin);
+    gradient.addColorStop(1, colorMax);
+
+    if (colorStop){
+        gradient.addColorStop(0.5, colorStop);
+    }
+    ctx.clearRect(0, 0, 50,200);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 25, 200);
+
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 25, 200);
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff7700';
+    ctx.fillStyle = '#ff7700';
+
+    ctx.moveTo(25, y);
+    ctx.lineTo(30, y-5);
+    ctx.lineTo(30, y+5);
+    ctx.lineTo(25, y);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+
+
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(30, y);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function colorLegendOver(p, colorMin, colorStop, colorMax){
+    var topLabel = 0;
+    var bottomLabel= 0.05;
+    $(".inlineLabelTop").text(topLabel);
+    $(".inlineLabelBottom").text(bottomLabel);
+
+    if (p !== null && p >=0 && p <= 0.05){
+        var percentage = p / 0.05;
+        var y = (percentage *200) + 5;
+        createCanvas(y, colorMin ,colorStop, colorMax);
+    } else {
+        createCanvasNoStroke(colorMin,colorStop,colorMax);
+    }
+}
+
+function colorLegendExp(p,coverage,colorMinExp ,colorStopExp, colorMaxExp, min, max){
+
+    var topLabel = max.toExponential().replace("e+","E");
+    var bottomLabel= min.toExponential().replace("e+","E");
+    $(".inlineLabelTop").text(topLabel);
+    $(".inlineLabelBottom").text(bottomLabel);
+
+    if (coverage !== null &&  p >= 0 && p <= 0.05){
+        var percentage = 1 - ((coverage - min) / (max - min));
+        var y = (percentage *200) + 5;
+        createCanvas(y, colorMinExp ,colorStopExp, colorMaxExp);
+    } else {
+        createCanvasNoStroke(colorMinExp,colorStopExp,colorMaxExp);
+    }
+}
 
 

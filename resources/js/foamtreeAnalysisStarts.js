@@ -88,20 +88,18 @@ function foamtreeAnalysisStarts(anaData) {
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
                 var pValue = props.group.pValue;
-                var colorTopInBar = ColorProfileEnum.properties[profileSelected].min;
-                var colorBottomInBar = ColorProfileEnum.properties[profileSelected].max;
                 var ratio = pValue / 0.05;
-                var colorValue = twoGradient(ratio, colorBottomInBar, colorTopInBar);
+                var colorValue = twoGradient(ratio, colorMax, colorMin);
 
                 // Calculate color gradient base on the range of pValue 0~0.5
-                if (pValue !== undefined && pValue >= 0 && pValue <= 0.05) {
+                if (pValue !== null && pValue >= 0 && pValue <= 0.05) {
                     vars.groupColor.r = colorValue.red;
                     vars.groupColor.g = colorValue.green;
                     vars.groupColor.b = colorValue.blue;
 
                     vars.groupColor.model = "rgb";
 
-                } else if (pValue !== undefined && pValue >= 0.05 ) {
+                } else if (pValue !== null && pValue >= 0.05 ) {
                     // Coverage defined, but greater than range
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
                 }
@@ -173,5 +171,16 @@ function foamtreeAnalysisStarts(anaData) {
     // Enable browser when after using pushstate
     window.addEventListener("popstate", function() {
         window.location.href = location.href;
+    });
+
+    $("#colorLegend").show();
+    var p =  null;
+    colorLegendOver(p,colorMin,colorStop,colorMax);
+
+    foamtree.on("groupClick", function (event) {
+        if(event.group.pValue){
+            var p = event.group.pValue;
+            colorLegendOver(p,colorMin,colorStop,colorMax);
+        }
     });
 }

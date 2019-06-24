@@ -91,21 +91,21 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     function setColor(column, flgNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
-                if (typeof props.group.exp != "undefined") {
+                if ( props.group.exp !== null) {
 
                     var coverage = props.group.exp[column];
                     var pValue = props.group.pValue;
                     var ratio = 1 - ((coverage - min) / (max - min));
-                    var colorValue = threeGradient(ratio, colorMaxExpInBar, colorMinExpInBar, colorStopExpInBar);
+                    var colorValue = threeGradient(ratio, colorMinExp, colorMaxExp, colorStopExp);
 
-                    if (pValue !== undefined && pValue >= 0 && pValue <= 0.05) {
+                    if (pValue !== null && pValue >= 0 && pValue <= 0.05) {
                         vars.groupColor.r = colorValue.red;
                         vars.groupColor.g = colorValue.green;
                         vars.groupColor.b = colorValue.blue;
 
                         vars.groupColor.model = "rgb";
 
-                    } else if (pValue !== undefined && pValue > 0.05) {
+                    } else if ( pValue !== null && pValue > 0.05) {
                         vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
                     }
                 } else {
@@ -245,5 +245,19 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     // Enable browser when after using pushstate
     window.addEventListener("popstate", function() {
         window.location.href = location.href;
+    });
+
+    $("#colorLegend").show();
+    var columnInLegent = null;
+    var p = null;
+    colorLegendExp(p,columnInLegent,colorMinExp ,colorStopExp, colorMaxExp, min, max);
+
+    foamtree.on("groupClick", function (event) {
+        var column = divs.eq(now).show().attr('value');
+        if(event.group.pValue){
+            var p = event.group.pValue;
+            var coverage = event.group.exp[column];
+            colorLegendExp(p,coverage,colorMinExp ,colorStopExp, colorMaxExp, min, max);
+        }
     });
 }
