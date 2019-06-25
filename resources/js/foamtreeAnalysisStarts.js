@@ -175,12 +175,25 @@ function foamtreeAnalysisStarts(anaData) {
 
     $("#colorLegend").show();
     var p =  null;
-    colorLegendOver(p,colorMin,colorStop,colorMax);
+    var selected = false;
+    var hovered = false;
+    colorLegendOver(p,selected, hovered,colorMin,colorStop,colorMax);
 
     foamtree.on("groupClick", function (event) {
         if(event.group.pValue){
             var p = event.group.pValue;
-            colorLegendOver(p,colorMin,colorStop,colorMax);
+            var selected = true;
+            var hovered = false;
+            colorLegendOver(p,selected, hovered,colorMin,colorStop,colorMax);
         }
     });
+    //
+    //foamtree.on("groupHover", function (event) {
+    //    if(event.group.pValue){
+    //        var p = event.group.pValue;
+    //        var selected = false;
+    //        var hovered = true;
+    //        colorLegendOver(p,selected, hovered,colorMin,colorStop,colorMax);
+    //    }
+    //});
 }

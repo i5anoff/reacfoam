@@ -413,8 +413,7 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
 function createCanvasNoStroke(colorMin,colorStop,colorMax){
     var canvas = document.getElementById('legendCanvas');
     var ctx = canvas.getContext('2d');
-
-    var gradient = ctx.createLinearGradient(0,0,25,200);
+    var gradient = ctx.createLinearGradient(10,0,30,200);
 
     gradient.addColorStop(0, colorMin);
     gradient.addColorStop(1, colorMax);
@@ -423,15 +422,16 @@ function createCanvasNoStroke(colorMin,colorStop,colorMax){
         gradient.addColorStop(0.5, colorStop);
     }
     ctx.clearRect(0, 0, 50,200);
-
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 25, 200);
+    ctx.beginPath();
+    ctx.fillRect(10, 0, 30, 200);
+    ctx.closePath();
 }
 
-function createCanvas(y, colorMin ,colorStop, colorMax){
+function createCanvas(y, selected,hovered,colorMin ,colorStop, colorMax){
     var canvas = document.getElementById('legendCanvas');
     var ctx = canvas.getContext('2d');
-    var gradient = ctx.createLinearGradient(0,0,25,200);
+    var gradient = ctx.createLinearGradient(10,0,30,200);
 
     gradient.addColorStop(0, colorMin);
     gradient.addColorStop(1, colorMax);
@@ -441,33 +441,56 @@ function createCanvas(y, colorMin ,colorStop, colorMax){
     }
     ctx.clearRect(0, 0, 50,200);
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 25, 200);
-
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 25, 200);
-
     ctx.beginPath();
-    ctx.strokeStyle = '#ff7700';
-    ctx.fillStyle = '#ff7700';
-
-    ctx.moveTo(25, y);
-    ctx.lineTo(30, y-5);
-    ctx.lineTo(30, y+5);
-    ctx.lineTo(25, y);
-    ctx.fill();
-    ctx.stroke();
+    ctx.fillRect(10, 0, 30, 200);
     ctx.closePath();
 
+    if (selected==true){
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.fillRect(10, 0, 30, 200);
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff7700';
+        ctx.fillStyle = '#ff7700';
 
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(30, y);
-    ctx.stroke();
-    ctx.closePath();
+        ctx.moveTo(40, y);
+        ctx.lineTo(45, y-5);
+        ctx.lineTo(45, y+5);
+        ctx.lineTo(40, y);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+
+
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+   if (hovered ==true ){
+       ctx.beginPath();
+       ctx.strokeStyle = 'blue';
+       ctx.fillStyle = 'blue';
+       ctx.moveTo(5, y - 5);
+       ctx.lineTo(10, y);
+       ctx.lineTo(5, y + 5);
+       ctx.lineTo(5, y - 5);
+       ctx.fill();
+       ctx.stroke();
+       ctx.closePath();
+
+       ctx.beginPath();
+       ctx.moveTo(10, y);
+       ctx.lineTo(40, y);
+       ctx.stroke();
+       ctx.closePath();
+   }
 }
 
-function colorLegendOver(p, colorMin, colorStop, colorMax){
+function colorLegendOver(p,selected,hovered, colorMin, colorStop, colorMax){
     var topLabel = 0;
     var bottomLabel= 0.05;
     $(".inlineLabelTop").text(topLabel);
@@ -476,7 +499,7 @@ function colorLegendOver(p, colorMin, colorStop, colorMax){
     if (p !== null && p >=0 && p <= 0.05){
         var percentage = p / 0.05;
         var y = (percentage *200) + 5;
-        createCanvas(y, colorMin ,colorStop, colorMax);
+        createCanvas(y,selected,hovered,colorMin ,colorStop, colorMax);
     } else {
         createCanvasNoStroke(colorMin,colorStop,colorMax);
     }

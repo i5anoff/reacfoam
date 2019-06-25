@@ -306,6 +306,7 @@ body {
 #legendCanvas{
     position: absolute;
     left: 11px;
+    left: -1px;
     top: 25px;
 }
 .inlineLabelBottom{

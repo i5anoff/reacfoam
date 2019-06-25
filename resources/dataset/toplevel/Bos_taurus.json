@@ -1,0 +1,414 @@
+[
+  {
+    "dbId": 9891912,
+    "displayName": "Cell Cycle",
+    "stId": "R-BTA-1640170",
+    "stIdVersion": "R-BTA-1640170.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Cell Cycle"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892625,
+    "displayName": "Cell-Cell communication",
+    "stId": "R-BTA-1500931",
+    "stIdVersion": "R-BTA-1500931.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Cell-Cell communication"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891930,
+    "displayName": "Cellular responses to external stimuli",
+    "stId": "R-BTA-8953897",
+    "stIdVersion": "R-BTA-8953897.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Cellular responses to external stimuli"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892917,
+    "displayName": "Chromatin organization",
+    "stId": "R-BTA-4839726",
+    "stIdVersion": "R-BTA-4839726.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Chromatin organization"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892151,
+    "displayName": "Developmental Biology",
+    "stId": "R-BTA-1266738",
+    "stIdVersion": "R-BTA-1266738.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Developmental Biology"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892432,
+    "displayName": "Digestion and absorption",
+    "stId": "R-BTA-8963743",
+    "stIdVersion": "R-BTA-8963743.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Digestion and absorption"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891953,
+    "displayName": "DNA Repair",
+    "stId": "R-BTA-73894",
+    "stIdVersion": "R-BTA-73894.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "DNA Repair"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891906,
+    "displayName": "DNA Replication",
+    "stId": "R-BTA-69306",
+    "stIdVersion": "R-BTA-69306.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "DNA Replication"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892517,
+    "displayName": "Extracellular matrix organization",
+    "stId": "R-BTA-1474244",
+    "stIdVersion": "R-BTA-1474244.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Extracellular matrix organization"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891940,
+    "displayName": "Gene expression (Transcription)",
+    "stId": "R-BTA-74160",
+    "stIdVersion": "R-BTA-74160.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Gene expression (Transcription)"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892210,
+    "displayName": "Hemostasis",
+    "stId": "R-BTA-109582",
+    "stIdVersion": "R-BTA-109582.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Hemostasis",
+      "Blood coagulation"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892301,
+    "displayName": "Immune System",
+    "stId": "R-BTA-168256",
+    "stIdVersion": "R-BTA-168256.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Immune System",
+      "Signaling in Immune system",
+      "Immune System signaling"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891957,
+    "displayName": "Metabolism",
+    "stId": "R-BTA-1430728",
+    "stIdVersion": "R-BTA-1430728.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Metabolism"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892012,
+    "displayName": "Metabolism of proteins",
+    "stId": "R-BTA-392499",
+    "stIdVersion": "R-BTA-392499.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Metabolism of proteins"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892018,
+    "displayName": "Metabolism of RNA",
+    "stId": "R-BTA-8953854",
+    "stIdVersion": "R-BTA-8953854.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Metabolism of RNA"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892691,
+    "displayName": "Muscle contraction",
+    "stId": "R-BTA-397014",
+    "stIdVersion": "R-BTA-397014.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Muscle contraction"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891981,
+    "displayName": "Neuronal System",
+    "stId": "R-BTA-112316",
+    "stIdVersion": "R-BTA-112316.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Neuronal System"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892990,
+    "displayName": "Organelle biogenesis and maintenance",
+    "stId": "R-BTA-1852241",
+    "stIdVersion": "R-BTA-1852241.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Organelle biogenesis and maintenance"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892050,
+    "displayName": "Programmed Cell Death",
+    "stId": "R-BTA-5357801",
+    "stIdVersion": "R-BTA-5357801.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Programmed Cell Death"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9893028,
+    "displayName": "Protein localization",
+    "stId": "R-BTA-9609507",
+    "stIdVersion": "R-BTA-9609507.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Protein localization"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892953,
+    "displayName": "Reproduction",
+    "stId": "R-BTA-1474165",
+    "stIdVersion": "R-BTA-1474165.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Reproduction"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9891999,
+    "displayName": "Signal Transduction",
+    "stId": "R-BTA-162582",
+    "stIdVersion": "R-BTA-162582.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Signal Transduction",
+      "Signaling Pathways"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892136,
+    "displayName": "Transport of small molecules",
+    "stId": "R-BTA-382551",
+    "stIdVersion": "R-BTA-382551.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Transport of small molecules"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
+    "dbId": 9892455,
+    "displayName": "Vesicle-mediated transport",
+    "stId": "R-BTA-5653656",
+    "stIdVersion": "R-BTA-5653656.1",
+    "isInDisease": false,
+    "isInferred": true,
+    "name": [
+      "Vesicle-mediated transport"
+    ],
+    "releaseDate": "2019-03-20",
+    "speciesName": "Bos taurus",
+    "hasDiagram": true,
+    "hasEHLD": false,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  }
+]
