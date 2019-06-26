@@ -410,5 +410,147 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
+function createCanvas(colorMin,colorStop,colorMax,min,max){
+
+    var topLabel = max ? max.toExponential().replace("e+","E"):0;
+    var bottomLabel= min? min.toExponential().replace("e+","E"):0.05;
+    $(".inlineLabelTop").text(topLabel);
+    $(".inlineLabelBottom").text(bottomLabel);
+
+    var canvas = document.getElementById('legendCanvasGradient');
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(0,0,30,200);
+
+    gradient.addColorStop(0, colorMin);
+    gradient.addColorStop(1, colorMax);
+
+    if (colorStop){
+        gradient.addColorStop(0.5, colorStop);
+    }
+    ctx.clearRect(0, 0, 50,200);
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.fillRect(0, 0, 30, 200);
+    ctx.closePath();
+}
+
+function drawOver(p, selected,hovered){
+    var canvas = document.getElementById('legendCanvas');
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(10,0,30,200);
+
+
+    ctx.clearRect(0, 0, 50,210);
+    ctx.fillStyle = gradient;
+
+    var percentage = p / 0.05;
+    var y = (percentage *200) + 5;
+
+
+    if (selected !==null){
+        if (p !== null && p >=0 && p <= 0.05){
+            ctx.beginPath();
+            ctx.fillRect(10, 0, 30, 200);
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.strokeStyle = '#ff7700';
+            ctx.fillStyle = '#ff7700';
+
+            ctx.moveTo(40, y);
+            ctx.lineTo(45, y-5);
+            ctx.lineTo(45, y+5);
+            ctx.lineTo(40, y);
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.moveTo(10, y);
+            ctx.lineTo(40, y);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+
+   if (hovered !==null ) {
+       if (p !== null && p >= 0 && p <= 0.05) {
+           ctx.beginPath();
+           ctx.strokeStyle = 'blue';
+           ctx.fillStyle = 'blue';
+           ctx.moveTo(5, y - 5);
+           ctx.lineTo(10, y);
+           ctx.lineTo(5, y + 5);
+           ctx.lineTo(5, y - 5);
+           ctx.fill();
+           ctx.stroke();
+           ctx.closePath();
+
+           ctx.beginPath();
+           ctx.moveTo(10, y);
+           ctx.lineTo(40, y);
+           ctx.stroke();
+           ctx.closePath();
+       }
+   }
+}
+
+function drawExp(p,coverage, selected,hovered,min,max){
+    var canvas = document.getElementById('legendCanvas');
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(10,0,30,200);
+
+    ctx.clearRect(0, 0, 50,210);
+    ctx.fillStyle = gradient;
+
+    var percentage = 1 - ((coverage - min) / (max - min));
+    var y = (percentage *200) + 5;
+
+    if (selected !==null) {
+        if (coverage !== null &&  p >= 0 && p <= 0.05) {
+            ctx.beginPath();
+            ctx.fillRect(10, 0, 30, 200);
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.strokeStyle = '#ff7700';
+            ctx.fillStyle = '#ff7700';
+
+            ctx.moveTo(40, y);
+            ctx.lineTo(45, y - 5);
+            ctx.lineTo(45, y + 5);
+            ctx.lineTo(40, y);
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+
+
+            ctx.beginPath();
+            ctx.moveTo(10, y);
+            ctx.lineTo(40, y);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+
+    if (hovered !==null ) {
+        if (coverage !== null && p >= 0 && p <= 0.05) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue';
+            ctx.fillStyle = 'blue';
+            ctx.moveTo(5, y - 5);
+            ctx.lineTo(10, y);
+            ctx.lineTo(5, y + 5);
+            ctx.lineTo(5, y - 5);
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.moveTo(10, y);
+            ctx.lineTo(40, y);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+}
 
 

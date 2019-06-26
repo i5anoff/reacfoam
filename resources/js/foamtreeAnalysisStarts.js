@@ -173,4 +173,16 @@ function foamtreeAnalysisStarts(anaData) {
         window.location.href = location.href;
     });
 
+    $("#colorLegend").show();
+
+    var min = null;
+    var max = null;
+    createCanvas(colorMin,colorStop,colorMax, min, max);
+
+    foamtree.on("groupClick", function (event) {
+        var p = event.group.pValue;
+        var selected = event.group;
+        var hovered = null;
+        drawOver(p, selected,hovered,colorMin ,colorStop, colorMax)
+    });
 }

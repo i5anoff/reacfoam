@@ -247,4 +247,15 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         window.location.href = location.href;
     });
 
+    $("#colorLegend").show();
+    createCanvas(colorMinExp,colorStopExp,colorMaxExp,min, max);
+
+    foamtree.on("groupClick", function (event) {
+        var column = divs.eq(now).show().attr('value');
+        var p = event.group.pValue;
+        var coverage = event.group.exp ? event.group.exp[column]: null;
+        var selected = event.group;
+        var hovered = null;
+        drawExp(p,coverage, selected,hovered, min, max)
+    });
 }
