@@ -294,7 +294,7 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
 
     // Add flag pathways conditionally and push to Ajax calls array
     if(flg !== null){
-        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -335,7 +335,7 @@ function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, r
     });
 
     if(flg !== null){
-        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -379,7 +379,7 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     });
 
     if(flg){
-        var dfFlag = $.getJSON("https://dev.reactome.org/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
