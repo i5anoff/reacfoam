@@ -1,5 +1,24 @@
 [
   {
+    "dbId": 9612973,
+    "displayName": "Autophagy",
+    "stId": "R-HSA-9612973",
+    "stIdVersion": "R-HSA-9612973.1",
+    "isInDisease": false,
+    "isInferred": false,
+    "name": [
+      "Autophagy"
+    ],
+    "releaseDate": "2019-06-12",
+    "releaseStatus": "NEW",
+    "speciesName": "Homo sapiens",
+    "doi": "10.3180/r-hsa-1632852.1",
+    "hasDiagram": true,
+    "hasEHLD": true,
+    "schemaClass": "TopLevelPathway",
+    "className": "TopLevelPathway"
+  },
+  {
     "dbId": 1640170,
     "displayName": "Cell Cycle",
     "stId": "R-HSA-1640170",
@@ -45,6 +64,7 @@
       "Cellular responses to external stimuli"
     ],
     "releaseDate": "2017-03-27",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -72,7 +92,7 @@
     "dbId": 400253,
     "displayName": "Circadian Clock",
     "stId": "R-HSA-400253",
-    "stIdVersion": "R-HSA-400253.2",
+    "stIdVersion": "R-HSA-400253.3",
     "isInDisease": false,
     "isInferred": false,
     "name": [
@@ -97,6 +117,7 @@
       "Developmental Biology"
     ],
     "releaseDate": "2011-09-20",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -124,13 +145,14 @@
     "dbId": 1643685,
     "displayName": "Disease",
     "stId": "R-HSA-1643685",
-    "stIdVersion": "R-HSA-1643685.7",
+    "stIdVersion": "R-HSA-1643685.9",
     "isInDisease": true,
     "isInferred": false,
     "name": [
       "Disease"
     ],
     "releaseDate": "2011-12-06",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": false,
@@ -255,7 +277,6 @@
       "Metabolism"
     ],
     "releaseDate": "2011-09-20",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": false,
@@ -273,7 +294,6 @@
       "Metabolism of proteins"
     ],
     "releaseDate": "2009-04-01",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -302,13 +322,14 @@
     "dbId": 5205647,
     "displayName": "Mitophagy",
     "stId": "R-HSA-5205647",
-    "stIdVersion": "R-HSA-5205647.2",
+    "stIdVersion": "R-HSA-5205647.3",
     "isInDisease": false,
     "isInferred": false,
     "name": [
       "Mitophagy"
     ],
     "releaseDate": "2015-09-22",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "doi": "10.3180/r-hsa-5205647",
     "hasDiagram": true,
@@ -344,7 +365,6 @@
       "Neuronal System"
     ],
     "releaseDate": "2008-06-30",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -362,7 +382,6 @@
       "Organelle biogenesis and maintenance"
     ],
     "releaseDate": "2014-03-12",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -380,7 +399,6 @@
       "Programmed Cell Death"
     ],
     "releaseDate": "2014-12-11",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -451,7 +469,6 @@
       "Transport of small molecules"
     ],
     "releaseDate": "2008-12-17",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "doi": "10.3180/REACT_15518.1",
     "hasDiagram": true,
