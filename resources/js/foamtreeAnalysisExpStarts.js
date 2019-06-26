@@ -247,17 +247,4 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         window.location.href = location.href;
     });
 
-    $("#colorLegend").show();
-    var columnInLegent = null;
-    var p = null;
-    colorLegendExp(p,columnInLegent,colorMinExp ,colorStopExp, colorMaxExp, min, max);
-
-    foamtree.on("groupClick", function (event) {
-        var column = divs.eq(now).show().attr('value');
-        if(event.group.pValue){
-            var p = event.group.pValue;
-            var coverage = event.group.exp[column];
-            colorLegendExp(p,coverage,colorMinExp ,colorStopExp, colorMaxExp, min, max);
-        }
-    });
 }
