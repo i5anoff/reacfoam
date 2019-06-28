@@ -247,15 +247,24 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         window.location.href = location.href;
     });
 
+    // Create canvas and fill gradient
     $("#colorLegend").show();
-    createCanvas(colorMinExp,colorStopExp,colorMaxExp,min, max);
+    createCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
 
+    // Draw flags when click or hover a group on canvas
+    var selected = null;
+    var hovered = null;
     foamtree.on("groupClick", function (event) {
         var column = divs.eq(now).show().attr('value');
         var p = event.group.pValue;
-        var coverage = event.group.exp ? event.group.exp[column]: null;
-        var selected = event.group;
-        var hovered = null;
-        drawExp(p,coverage, selected,hovered, min, max)
+        selected = (event.group.exp && (p!==null && p <= 0.05) )? event.group.exp[column]: null;
+        drawExp(selected, hovered, min, max)
+    });
+
+    foamtree.on("groupHover", function (event) {
+        var column = divs.eq(now).show().attr('value');
+        var p = event.group.pValue;
+        var hovered = (event.group.exp && (p!==null && p <= 0.05)) ? event.group.exp[column]: null;
+        drawExp(selected, hovered, min, max)
     });
 }

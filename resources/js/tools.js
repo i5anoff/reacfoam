@@ -14,10 +14,10 @@ var ColorProfileEnum = {
     BARIUM_LITHIUM: 3,
     CALCIUM_SALTS: 4,
     properties: {
-        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
-        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
-        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", selection: "#BBBBFF", flag: "#FF00FF", min: "#A0A0A0", stop: null, max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
-        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", selection: "#BBBBFF", flag: "#FF00FF", min: "#934A00", stop: null, max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
+        1: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", highlight: "#EEB956", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF" ,stop_exp: null} ,
+        2: {group: "#58C3E5", label: "#000", fadeout: "#E6E6E6", hit: "#C2C2C2", selection: "#FF7700", highlight: "#EEB956", flag: "#FF00FF", min: "#FDE233", stop: null, max: "#959000", min_exp: "#FFFF00", max_exp: "#0000FF", stop_exp:"#56D7EE" },
+        3: {group: "#FF9999", label: "#000", fadeout: "#F8F8F8", hit: "#E0E0E0", selection: "#BBBBFF", highlight : "#E1ED55", flag: "#FF00FF", min: "#A0A0A0", stop: null, max: "#000000", min_exp: "#00FF00", max_exp: "#FF0000", stop_exp:"#000000"},
+        4: {group: "#FF9999", label: "#000", fadeout: "#FFE4E1", hit: "#FFCCCC", selection: "#BBBBFF",  highlight: "#E1ED55", flag: "#FF00FF", min: "#934A00", stop: null, max: "#FFAD33", min_exp: "#934A00", max_exp: "#FFAD33", stop_exp: null}
     }
 };
 
@@ -55,6 +55,9 @@ var colorStopExp = ColorProfileEnum.properties[profileSelected].stop_exp;
 var colorMin = ColorProfileEnum.properties[profileSelected].min;
 var colorMax = ColorProfileEnum.properties[profileSelected].max;
 var colorStop = ColorProfileEnum.properties[profileSelected].stop;
+
+var colorSelection = ColorProfileEnum.properties[profileSelected].selection;
+var colorhighlight = ColorProfileEnum.properties[profileSelected].highlight;
 
 // Get selected stId from url
 var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
@@ -410,16 +413,18 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
-function createCanvas(colorMin,colorStop,colorMax,min,max){
+// Create canvas
+function createCanvas(colorMin, colorStop, colorMax, min, max){
 
-    var topLabel = max ? max.toExponential().replace("e+","E"):0;
-    var bottomLabel= min? min.toExponential().replace("e+","E"):0.05;
+    var topLabel = (max || max == 0 )? max.toExponential(2).replace("e+","E").replace(".00", ""): 0;
+    var bottomLabel= (min || min == 0 )? min.toExponential(2).replace("e+","E").replace(".00", ""): 0.05;
+
     $(".inlineLabelTop").text(topLabel);
     $(".inlineLabelBottom").text(bottomLabel);
 
     var canvas = document.getElementById('legendCanvasGradient');
     var ctx = canvas.getContext('2d');
-    var gradient = ctx.createLinearGradient(0,0,30,200);
+    var gradient = ctx.createLinearGradient(0, 0, 30, 200);
 
     gradient.addColorStop(0, colorMin);
     gradient.addColorStop(1, colorMax);
@@ -434,122 +439,113 @@ function createCanvas(colorMin,colorStop,colorMax,min,max){
     ctx.closePath();
 }
 
-function drawOver(p, selected,hovered){
+// Draw flag when give a overrepresentation analysis
+function drawOver(selected, hovered){
     var canvas = document.getElementById('legendCanvas');
     var ctx = canvas.getContext('2d');
-    var gradient = ctx.createLinearGradient(10,0,30,200);
+    var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
-
-    ctx.clearRect(0, 0, 50,210);
+    ctx.clearRect(0, 0, 50, 210);
     ctx.fillStyle = gradient;
 
-    var percentage = p / 0.05;
-    var y = (percentage *200) + 5;
+    if (selected !== null && selected >=0 && selected <= 0.05){
+        var percentage = selected / 0.05;
+        var y = Math.round((percentage * 200) + 5);
+        ctx.beginPath();
+        ctx.fillRect(10, 0, 30, 200);
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = colorSelection;
+        ctx.fillStyle = colorSelection;
 
+        ctx.moveTo(40, y);
+        ctx.lineTo(45, y-5);
+        ctx.lineTo(45, y+5);
+        ctx.lineTo(40, y);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
 
-    if (selected !==null){
-        if (p !== null && p >=0 && p <= 0.05){
-            ctx.beginPath();
-            ctx.fillRect(10, 0, 30, 200);
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.strokeStyle = '#ff7700';
-            ctx.fillStyle = '#ff7700';
-
-            ctx.moveTo(40, y);
-            ctx.lineTo(45, y-5);
-            ctx.lineTo(45, y+5);
-            ctx.lineTo(40, y);
-            ctx.fill();
-            ctx.stroke();
-            ctx.closePath();
-
-            ctx.beginPath();
-            ctx.moveTo(10, y);
-            ctx.lineTo(40, y);
-            ctx.stroke();
-            ctx.closePath();
-        }
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.closePath();
     }
+    if (hovered !== null && hovered >= 0 && hovered <= 0.05) {
+        var percentage = hovered / 0.05;
+        var y = Math.round((percentage * 200) + 5);
+        ctx.beginPath();
+        ctx.strokeStyle = colorhighlight;
+        ctx.fillStyle = colorhighlight;
+        ctx.moveTo(5, y - 5);
+        ctx.lineTo(10, y);
+        ctx.lineTo(5, y + 5);
+        ctx.lineTo(5, y - 5);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
 
-   if (hovered !==null ) {
-       if (p !== null && p >= 0 && p <= 0.05) {
-           ctx.beginPath();
-           ctx.strokeStyle = 'blue';
-           ctx.fillStyle = 'blue';
-           ctx.moveTo(5, y - 5);
-           ctx.lineTo(10, y);
-           ctx.lineTo(5, y + 5);
-           ctx.lineTo(5, y - 5);
-           ctx.fill();
-           ctx.stroke();
-           ctx.closePath();
-
-           ctx.beginPath();
-           ctx.moveTo(10, y);
-           ctx.lineTo(40, y);
-           ctx.stroke();
-           ctx.closePath();
-       }
-   }
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.closePath();
+    }
 }
 
-function drawExp(p,coverage, selected,hovered,min,max){
+// Draw flag when give a expression analysis
+function drawExp(selected, hovered, min, max){
     var canvas = document.getElementById('legendCanvas');
     var ctx = canvas.getContext('2d');
-    var gradient = ctx.createLinearGradient(10,0,30,200);
+    var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
-    ctx.clearRect(0, 0, 50,210);
+    ctx.clearRect(0, 0, 50, 210);
     ctx.fillStyle = gradient;
 
-    var percentage = 1 - ((coverage - min) / (max - min));
-    var y = (percentage *200) + 5;
+    if (selected !== null) {
+        var percentage = 1 - ((selected - min) / (max - min));
+        var y = Math.round((percentage *200 ) + 5);
+        ctx.beginPath();
+        ctx.fillRect(10, 0, 30, 200);
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = colorSelection;
+        ctx.fillStyle = colorSelection;
 
-    if (selected !==null) {
-        if (coverage !== null &&  p >= 0 && p <= 0.05) {
-            ctx.beginPath();
-            ctx.fillRect(10, 0, 30, 200);
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.strokeStyle = '#ff7700';
-            ctx.fillStyle = '#ff7700';
+        ctx.moveTo(40, y);
+        ctx.lineTo(45, y - 5);
+        ctx.lineTo(45, y + 5);
+        ctx.lineTo(40, y);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
 
-            ctx.moveTo(40, y);
-            ctx.lineTo(45, y - 5);
-            ctx.lineTo(45, y + 5);
-            ctx.lineTo(40, y);
-            ctx.fill();
-            ctx.stroke();
-            ctx.closePath();
-
-
-            ctx.beginPath();
-            ctx.moveTo(10, y);
-            ctx.lineTo(40, y);
-            ctx.stroke();
-            ctx.closePath();
-        }
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.closePath();
     }
-
     if (hovered !==null ) {
-        if (coverage !== null && p >= 0 && p <= 0.05) {
-            ctx.beginPath();
-            ctx.strokeStyle = 'blue';
-            ctx.fillStyle = 'blue';
-            ctx.moveTo(5, y - 5);
-            ctx.lineTo(10, y);
-            ctx.lineTo(5, y + 5);
-            ctx.lineTo(5, y - 5);
-            ctx.fill();
-            ctx.stroke();
-            ctx.closePath();
+        var percentage = 1 - ((hovered - min) / (max - min));
+        var y = Math.round((percentage *200) + 5);
+        ctx.beginPath();
+        ctx.strokeStyle = colorhighlight;
+        ctx.fillStyle = colorhighlight;
+        ctx.moveTo(5, y - 5);
+        ctx.lineTo(10, y);
+        ctx.lineTo(5, y + 5);
+        ctx.lineTo(5, y - 5);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
 
-            ctx.beginPath();
-            ctx.moveTo(10, y);
-            ctx.lineTo(40, y);
-            ctx.stroke();
-            ctx.closePath();
-        }
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.closePath();
     }
 }
 
