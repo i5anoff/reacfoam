@@ -256,15 +256,21 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     var hovered = null;
     foamtree.on("groupClick", function (event) {
         var column = divs.eq(now).show().attr('value');
-        var p = event.group.pValue;
-        selected = (event.group.exp && (p!==null && p <= 0.05) )? event.group.exp[column]: null;
+        var pGroup = event.group;
+        if (!pGroup){
+            return
+        }
+        selected = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05) )? event.group.exp[column]: null;
         drawExp(selected, hovered, min, max)
     });
 
     foamtree.on("groupHover", function (event) {
         var column = divs.eq(now).show().attr('value');
-        var p = event.group.pValue;
-        var hovered = (event.group.exp && (p!==null && p <= 0.05)) ? event.group.exp[column]: null;
+        var pGroup = event.group;
+        if (!pGroup) {
+            return;
+        }
+        var hovered = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05)) ? event.group.exp[column]: null;
         drawExp(selected, hovered, min, max)
     });
 }

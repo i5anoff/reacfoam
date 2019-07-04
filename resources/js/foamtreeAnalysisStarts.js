@@ -183,12 +183,20 @@ function foamtreeAnalysisStarts(anaData) {
     var selected = null;
     var hovered = null;
     foamtree.on("groupClick", function (event) {
-        selected = event.group.pValue;
+        var selectedGroup = event.group;
+        if (!selectedGroup){
+            return
+        }
+        selected = selectedGroup.pValue;
         drawOver(selected, hovered)
     });
 
     foamtree.on("groupHover", function (event) {
-        var hovered = event.group.pValue;
+        var hoveredGroup = event.group;
+        if (!hoveredGroup) {
+            return;
+        }
+        var hovered = hoveredGroup.pValue;
         drawOver(selected, hovered)
     });
 }
