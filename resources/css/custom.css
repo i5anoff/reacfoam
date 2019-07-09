@@ -226,8 +226,6 @@ body {
 }
 
 #expressionBar button, #flagBar button{
-    background-color: #58c3e5;
-    color: white;
     height: 24px;
     width: 24px;
     overflow: hidden;
@@ -237,8 +235,21 @@ body {
     cursor: pointer;
     float: left;
     margin: 2px;
-    border-radius: 50%;
-    font-size: 15px;
+}
+.prevButton {
+    background: url("../images/rewind_normal.png");
+}
+.playButton {
+    background: url("../images/play_normal.png");
+}
+.pauseButton {
+    background: url("../images/pause_normal.png");
+}
+.nextButton {
+    background: url("../images/forward_normal.png");
+}
+.closeButton {
+    background: url("../images/close_normal.png");
 }
 
 #columnNames{
@@ -305,8 +316,7 @@ body {
 }
 #legendCanvas{
     position: absolute;
-    left: 11px;
-    left: -1px;
+    left: 0;
     top: 20px;
 }
 #legendCanvasGradient{
@@ -364,11 +374,14 @@ body {
         margin: 0 5px;
     }
     #expressionBar {
-        width:260px;
+        width:305px;
         margin-left: 35px;
     }
     #columnNames span {
         margin: 5px 1px 0 25px;
+    }
+    #columnNames {
+        width: 200px;
     }
 }
 @media  only screen and (max-width: 570px) {
@@ -387,6 +400,18 @@ body {
         margin-left: 15px;
     }
 }
+@media only screen and (max-height: 568px) and (orientation: landscape) {
+    #expressionBar {
+        width:280px;
+        margin-left: 35px;
+    }
+    #columnNames {
+        width: 170px;
+    }
+    #flagBar{
+        margin: 0 5px 0 0;
+    }
+}
 
 @media  only screen and (max-width: 450px) {
     #expressionBar {
@@ -399,6 +424,11 @@ body {
     #columnNames span {
         margin: 5px 1px 0 40px;
     }
+
+    #columnNames {
+       width:205px;
+    }
+
 }
 
 @media only screen and (max-width: 425px) {

@@ -202,8 +202,23 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     var intervalId = null;
     $("button[name=play]").click(function () {
 
-        $(this).attr('title', $(this).attr('title')==='Play'? 'Pause':'Play');
-        $(this).html( $(this).html() === String.fromCharCode(9656) ? '&#2405;':'&#9656;');
+        $(".playButton").hide();
+        $(".pauseButton").show();
+
+        if (!intervalId) {
+            intervalId = setInterval(function () {
+                $("button[name=next]").click();
+            }, 2000);
+        } else {
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+    });
+    // Pause button control
+    $("button[name=pause]").click(function () {
+
+        $(".playButton").show();
+        $(".pauseButton").hide();
 
         if (!intervalId) {
             intervalId = setInterval(function () {
