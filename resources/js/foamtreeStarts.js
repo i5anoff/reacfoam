@@ -142,6 +142,7 @@ function foamtreeStarts(groupsData){
     // Add flag bar
     if (flg !== null){
         $("#flagBar").show();
+        $("#container").addClass("adjustHeightwithFlg");
         var span = document.createElement("span");
         var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
         span.appendChild(textnode);
@@ -159,6 +160,7 @@ function foamtreeStarts(groupsData){
         foamtree.redraw();
 
         $("#flagBar").hide();
+        $("#container").removeClass("adjustHeightwithFlg");
     });
 
     // Enable browser when after using pushstate

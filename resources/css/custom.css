@@ -199,11 +199,14 @@ body {
     bottom: 10px;
     position: absolute;
     width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-.bars {
-    display: flex;
-    justify-content: center;
+.bottomPanel > div {
+    text-align: center;
+    margin: 0 5px;
 }
 
 #layout {
@@ -211,7 +214,6 @@ body {
     font-size: 14px;
     position: absolute;
     bottom: 15px;
-    z-index:1;
 }
 #expressionBar {
     text-align: center;
@@ -219,10 +221,9 @@ body {
     position: relative ;
     background-color: rgba(240, 240, 240, 0.9);
     border: 1px solid lightgray;
-    width: 400px;
+    width: 320px;
     height: 30px;
     border-radius: 5px;
-    margin: 0 5px;
 }
 
 #expressionBar button, #flagBar button{
@@ -253,17 +254,17 @@ body {
 }
 
 #columnNames{
-    width: 300px;
+    width: 205px;
 }
 #columnNames span {
-    margin: 5px 1px 0 80px;
+    margin: 5px 1px 0 20px;
     float: left;
     font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
     white-space: nowrap;
-    max-width: 205px;
+    max-width: 180px;
 }
 
 #flagBar {
@@ -333,57 +334,68 @@ body {
 }
 /* start media queries */
 @media  only screen and (max-width: 1024px) {
-    .bars{
-        flex-direction: column-reverse;
-    }
-    #expressionBar {
-        margin: 0 0;
-    }
-    #flagBar {
-        bottom:5px;
-    }
     #container{
-        bottom: 80px;
         height: 90%;
     }
     .bottomPanel {
-        bottom: 20px;
+        bottom: 23px;
     }
     #layout {
         width: 100%;
         bottom: 0;
         margin-left: 0;
-    }
-    .layout-align {
         text-align: center;
     }
 }
 
-@media  only screen and (max-width: 768px) {
+@media  only screen and (device-width: 1024px)  and  (device-height: 1366px){
+    #container{
+        height: 96%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #container {
+        height: 91%;
+    }
+}
+
+/* Ipad Mini */
+@media  only screen and (device-width: 768px)  and  (device-height: 1024px){
+    #container{
+        height: 94%;
+    }
+}
+
+/*Google pixel 2 and 2XL / landscape */
+@media only screen and (device-width: 731px) and (device-height: 411px) and (orientation: landscape){
     #container{
         height: 85%;
     }
 }
 
-@media only screen and (max-height: 768px) and (orientation: landscape) {
-    .bars {
-        flex-direction: row;
-    }
-    #flagBar {
-        bottom: 0 ;
-        margin: 0 5px;
-    }
-    #expressionBar {
-        width:305px;
-        margin-left: 35px;
-    }
-    #columnNames span {
-        margin: 5px 1px 0 25px;
-    }
-    #columnNames {
-        width: 200px;
+@media only screen and (device-width: 823px) and (device-height: 411px) and (orientation: landscape){
+    #container{
+        height: 87%;
     }
 }
+
+/*iPhone 5 landscape*/
+@media only screen and  (device-width: 568px) and (device-height: 320px) and (orientation: landscape) {
+    #container {
+        height: 93%;
+    }
+    .bottomPanel {
+        flex-flow: wrap !important;
+    }
+    .adjustHeight {
+        height: 83% !important;
+    }
+    .adjustHeightwithFlg {
+        height: 75% !important;
+    }
+}
+
 @media  only screen and (max-width: 570px) {
     .visualization-hint {
         word-break: break-word;
@@ -395,40 +407,6 @@ body {
     .visualization-hint .info{
         top: 6px;
     }
-    .bars {
-        display: flex;
-        margin-left: 15px;
-    }
-}
-@media only screen and (max-height: 568px) and (orientation: landscape) {
-    #expressionBar {
-        width:280px;
-        margin-left: 35px;
-    }
-    #columnNames {
-        width: 170px;
-    }
-    #flagBar{
-        margin: 0 5px 0 0;
-    }
-}
-
-@media  only screen and (max-width: 450px) {
-    #expressionBar {
-        width: 310px;
-    }
-    .bars {
-        display: flex;
-        margin-left: 15px;
-    }
-    #columnNames span {
-        margin: 5px 1px 0 40px;
-    }
-
-    #columnNames {
-       width:205px;
-    }
-
 }
 
 @media only screen and (max-width: 425px) {
@@ -443,13 +421,42 @@ body {
         top: 6px;
     }
     #container{
-        height: 82%;
+        height: 95%;
+    }
+    .adjustHeight {
+        height: 89% !important;
+    }
+    .adjustHeightwithFlg {
+        /*height: 82% !important;*/
+        height: 85% !important;
+    }
+    .bottomPanel > div {
+        margin: 3px 0;
     }
 }
 
 @media  only screen and (max-width: 375px) {
     #container{
-        height: 82%;
+        height: 96%;
+    }
+    .adjustHeight {
+        height: 89% !important;
+    }
+    .adjustHeightwithFlg {
+        height: 82% !important;
+    }
+}
+
+/* iPhone X */
+@media  only screen and (device-width: 375px) and (device-height: 812px) {
+    #container {
+        height: 96%;
+    }
+    .adjustHeight {
+        height: 92% !important;
+    }
+    .adjustHeightwithFlg {
+        height: 87% !important;
     }
 }
 
@@ -471,23 +478,6 @@ body {
     .visualization-help dl {
         margin: 0 0 1px 0;
     }
-    .bottomPanel {
-        flex-direction: column;
-    }
-    .bars{
-        display:contents
-    }
-    #expressionBar {
-        margin-left: 15px;
-        width: 320px;
-    }
-    #flagBar {
-        margin-left: 15px;
-        bottom:0
-    }
-    #container{
-        height: 85%;
-    }
 }
 
 @media only screen and (orientation: landscape) {
@@ -496,9 +486,12 @@ body {
     }
 }
 
-@media only screen and (max-height: 411px) and (orientation: landscape) {
-    #container {
-        height: 85%;
+@media only screen and (max-height: 375px) and (orientation: landscape) {
+    .bottomPanel {
+        flex-flow: row;
+    }
+    #container{
+        height: 83%;
     }
 }
 
@@ -508,12 +501,6 @@ body {
     }
     .visualization-help dl {
         margin: 0 0 1px 0;
-    }
-    #flagBar span {
-      width:240px;
-    }
-    .bottomPanel {
-      margin-left: 115px;
     }
 }
 /* end media queries */

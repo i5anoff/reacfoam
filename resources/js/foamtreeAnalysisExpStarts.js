@@ -128,6 +128,7 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     for (var j = 0; j < columnArray.length; j++) {
         var span = document.createElement("span");
         span.setAttribute("value", columnArray[j]);
+        span.setAttribute("title", columnArray[j]);
         var textnode = document.createTextNode( j+1 + "/"  + columnArray.length + " :: " +columnArray[j]);
         span.appendChild(textnode);
         columnNames.appendChild(span);
@@ -137,6 +138,8 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
     var divs = $('#columnNames>span');
     var now = 0;
     $("#expressionBar").show();
+    $("#container").addClass("adjustHeight");
+
     // Currently shown span
     divs.hide().first().show();
 
@@ -230,15 +233,20 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         }
     });
 
-    // Colse button control
+    // Close button control
     $("button[name=close]").click(function () {
         $("#expressionBar").hide();
-        //TODO if flag exists
-        window.location.href = location.href.split("?")[0];
+        var analysisParam = getUrlVars()["analysis"];
+        var resourceParam = getUrlVars()["resource"];
+        var url = location.href.replace("&analysis="+analysisParam, "").replace("?analysis="+analysisParam, "").replace("analysis="+analysisParam, "")
+                               .replace("&resource="+resourceParam, "").replace("?resource="+resourceParam, "").replace("resource="+resourceParam, "");
+        window.location.href = url;
     });
+
     // Add flag bar
     if (flg !== null){
         $("#flagBar").show();
+        $("#container").addClass("adjustHeightwithFlg");
         var span = document.createElement("span");
         var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
         span.appendChild(textnode);
@@ -255,7 +263,7 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
         setColor(column, flgAfterClear);
 
         $("#flagBar").hide();
-
+        $("#container").removeClass("adjustHeightwithFlg");
     });
     // Enable browser when after using pushstate
     window.addEventListener("popstate", function() {

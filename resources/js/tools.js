@@ -64,6 +64,8 @@ var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : nul
 var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
 var countFlaggedItems;
 
+var CONTENT_SERVICE = "/ContentService";
+
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
  * */
@@ -297,12 +299,13 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
 
     // Add flag pathways conditionally and push to Ajax calls array
     if(flg !== null){
-        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
         });
         deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+        $("#container").addClass("adjustHeight");
     } else {
         deferreds.push(dfSpeciesData, dfTopSpeciesData);
     }
@@ -338,12 +341,13 @@ function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, r
     });
 
     if(flg !== null){
-        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
         });
         deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+        $("#container").addClass("adjustHeight");
     } else{
         deferreds.push(dfSpeciesData, dfTopSpeciesData);
     }
@@ -381,13 +385,14 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
         topSpeciesData = topData;
     });
 
-    if(flg){
-        var dfFlag = $.getJSON("/ContentService/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+    if(flg!== null){
+        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
         });
         deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+
     } else{
         deferreds.push(dfSpeciesData, dfTopSpeciesData);
     }
