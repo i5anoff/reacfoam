@@ -315,7 +315,7 @@ body {
     width: 49px;
     text-align: center;
 }
-#legendCanvas{
+#legendCanvasFlag{
     position: absolute;
     left: 0;
     top: 20px;
@@ -331,6 +331,26 @@ body {
     top: 230px;
     width: 49px;
     text-align: center;
+}
+
+
+.adjustInlineLabelTop{
+    font-size: 10px;
+    line-height: 0.9em;
+    width: 40px;
+    top: 3px;
+    left: 5px;
+    height: 15px;
+
+}
+.adjustInlineLabelBottom{
+    font-size: 10px;
+    line-height: 0.9em;
+    width: 40px;
+    top: 226px;
+    left: 5px;
+    height: 15px;
+
 }
 /* start media queries */
 @media  only screen and (max-width: 1024px) {

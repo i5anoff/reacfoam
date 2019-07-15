@@ -59,6 +59,15 @@ var colorStop = ColorProfileEnum.properties[profileSelected].stop;
 var colorSelection = ColorProfileEnum.properties[profileSelected].selection;
 var colorhighlight = ColorProfileEnum.properties[profileSelected].highlight;
 
+
+var colorMap = new Map();
+colorMap.set(2, threeGradient(0.0, colorMinExp, colorMaxExp, colorStopExp))
+    .set( 1, threeGradient(0.25, colorMinExp, colorMaxExp, colorStopExp))
+    .set( 0, getColorNotFound(threeGradient(0.5, colorMinExp, colorMaxExp, colorStopExp)))
+    .set(-1, threeGradient(0.75, colorMinExp, colorMaxExp, colorStopExp))
+    .set( -2, threeGradient(1.0, colorMinExp, colorMaxExp, colorStopExp));
+
+
 // Get selected stId from url
 var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
 var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
@@ -129,14 +138,14 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
     defaultFoamtreeData.forEach(addExpToGroup);
     function addExpToGroup(group) {
         // Add Exp to top 1 level
-        columnNameResponse[group.stId] ? Object.assign(group, {'exp': columnNameResponse[group.stId]}) : Object.assign(group, {'exp': null});
+        (columnNameResponse[group.stId] != null) ? Object.assign(group, {'exp': columnNameResponse[group.stId]}) : Object.assign(group, {'exp': null});
 
         // Add Exp to child hierarchical level
         if (group.groups && group.groups.length > 0) {
             group.groups.forEach(addExpToGroup);
 
             for (var i = 0; i < group.groups.length; i++) {
-                if (columnNameResponse[group.groups[i].stId]) {
+                if (columnNameResponse[group.groups[i].stId] != null) {
                     group.groups[i] = Object.assign(group.groups[i], {'exp': columnNameResponse[group.groups[i].stId]});
                 } else {
                     group.groups[i] = Object.assign(group.groups[i], {'exp': null});
@@ -150,14 +159,14 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
     function addPvalueAndUrlToGroup(group) {
 
         // Add pValue and analysis url top 1 level
-        pvalueResponse[group.stId] ? Object.assign(group, {'pValue': pvalueResponse[group.stId], 'url': group.url + "&DTAB=AN&ANALYSIS=" + token}) : Object.assign(group, {'pValue': null, 'url': group.url + "&DTAB=AN&ANALYSIS=" + token});
+        ( pvalueResponse[group.stId] != null )? Object.assign(group, {'pValue': pvalueResponse[group.stId], 'url': group.url + "&DTAB=AN&ANALYSIS=" + token}) : Object.assign(group, {'pValue': null, 'url': group.url + "&DTAB=AN&ANALYSIS=" + token});
 
         // Add pValue and analysis url to child hierarchical level
         if (group.groups && group.groups.length > 0) {
             group.groups.forEach(addPvalueAndUrlToGroup);
 
             for (var i =0; i < group.groups.length; i++){
-                if (pvalueResponse[group.groups[i].stId]) {
+                if (pvalueResponse[group.groups[i].stId] != null) {
                     group.groups[i] = Object.assign( group.groups[i],{'pValue': pvalueResponse[group.groups[i].stId], 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
                 } else {
                     group.groups[i] = Object.assign(group.groups[i],{'pValue': null });
@@ -178,14 +187,14 @@ function addAnaResult(dataFromToken, token, defaultFoamtreeData){
     function addPvalueAndUrlToGroup(group) {
 
         // Add pValue and analysis url top 1 level
-        dataFromToken[group.stId] ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': null, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
+        ( dataFromToken[group.stId] !=null) ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': null, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
 
         // Add pValue and analysis url to child hierarchical level
         if (group.groups && group.groups.length > 0) {
             group.groups.forEach(addPvalueAndUrlToGroup);
 
             for (var i =0; i < group.groups.length; i++){
-                if (dataFromToken[group.groups[i].stId]) {
+                if (dataFromToken[group.groups[i].stId] != null) {
                     Object.assign( group.groups[i], {'pValue': dataFromToken[group.groups[i].stId],'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
                 } else {
                     Object.assign( group.groups[i], {'pValue': null, 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
@@ -418,6 +427,53 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
+// GSA analysis
+function foamtreeAnaGSAWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+
+    var flagStId = [];
+    var deferreds = [];
+
+    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
+        speciesData = data;
+    });
+    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
+        topSpeciesData = topData;
+    });
+
+    if(flg!== null){
+        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+            data.llps.forEach(function(val) {
+                flagStId.push(val);
+            });
+        });
+        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+
+    } else{
+        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    }
+
+    $.when.apply( $, deferreds)
+        .then( function(){
+            if ( typeof speciesData && topSpeciesData !== "undefined") {
+
+                datasetInFoamtree = getData(speciesData, topSpeciesData);
+
+                if(flg !== null){
+                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
+                    var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
+                    foamtreeGSAStarts( anaExpData, min, max, columnArray);
+                    $(".waiting").hide();
+                } else {
+                    var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
+                    foamtreeGSAStarts( anaExpDataNoFlg, min, max, columnArray);
+                    $(".waiting").hide();
+                }
+            }
+        }
+    );
+}
+
+
 // Create canvas
 function createCanvas(colorMin, colorStop, colorMax, min, max){
 
@@ -444,9 +500,78 @@ function createCanvas(colorMin, colorStop, colorMax, min, max){
     ctx.closePath();
 }
 
+// Create canvas
+function createGSACanvas(colorMap){
+
+    var topLabel = "Up-regulated" ;
+    var bottomLabel= "Down-regulated";
+
+    $(".inlineLabelTop").text(topLabel).addClass("adjustInlineLabelTop");
+    $(".inlineLabelBottom").text(bottomLabel).addClass("adjustInlineLabelBottom");
+
+    var canvas = document.getElementById("legendCanvasGradient");
+    var ctx = canvas.getContext('2d');
+
+    var height = 40;
+    var i = 0;
+
+    var symbols = [ "\u25BC\u25BC",
+        "\u25BC",
+        "-",
+        "\u25B2",
+        "\u25B2\u25B2" ];
+
+    colorMap.forEach(function(value, key) {
+        ctx.fillStyle = 'rgb('+
+            colorMap.get(key).red+','+
+            colorMap.get(key).green+','+
+            colorMap.get(key).blue+')';
+        ctx.beginPath();
+        ctx.fillRect(0, i * height, 30, height);
+        ctx.closePath();
+
+        // Symbols
+        ctx.shadowColor =("rgba(0,0,0,0.5)");
+        ctx.shadowBlur = 4;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.setFont = "bold 13px Arial";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(symbols[key +2], 15, i * height + height/2.0);
+
+        i++;
+    });
+
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function getColorNotFound(color){
+
+    var  colorNotFound = {red: 128, green: 128, blue: 128};
+
+    var hexColor = rgbToHex(color.red, color.green, color.blue);
+
+    if ( hexColor == "#56d7ee"){
+        return colorNotFound
+    }
+
+    if ( hexColor == "#c97c1a"){
+        return colorNotFound
+    }
+    return color
+}
+
 // Draw flag when give a overrepresentation analysis
 function drawOver(selected, hovered){
-    var canvas = document.getElementById('legendCanvas');
+    var canvas = document.getElementById('legendCanvasFlag');
     var ctx = canvas.getContext('2d');
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
@@ -501,7 +626,7 @@ function drawOver(selected, hovered){
 
 // Draw flag when give a expression analysis
 function drawExp(selected, hovered, min, max){
-    var canvas = document.getElementById('legendCanvas');
+    var canvas = document.getElementById('legendCanvasFlag');
     var ctx = canvas.getContext('2d');
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
@@ -554,4 +679,90 @@ function drawExp(selected, hovered, min, max){
     }
 }
 
+// Draw flag when give a expression analysis
+function drawGsa(selected, hovered, min, max){
+    var canvas = document.getElementById('legendCanvasFlag');
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(10, 0, 30, 200);
+
+
+    ctx.clearRect(0, 0, 50, 210);
+    ctx.fillStyle = gradient;
+
+    if (selected !== null) {
+        var percentage =( (selected - max) * (0.90 - 0.10)/(min - max) ) + 0.10;
+        var y = Math.round((percentage *200 ) + 5);
+        ctx.beginPath();
+        ctx.fillRect(10, 0, 30, 200);
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = colorSelection;
+        ctx.fillStyle = colorSelection;
+
+        ctx.moveTo(40, y);
+        ctx.lineTo(45, y - 5);
+        ctx.lineTo(45, y + 5);
+        ctx.lineTo(40, y);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+
+        //ctx.beginPath();
+        //ctx.moveTo(10, y);
+        //ctx.lineTo(40, y);
+        //ctx.stroke();
+        //ctx.closePath();
+    }
+    if (hovered !==null ) {
+
+        var percentage =( (hovered - max) * (0.90 - 0.10)/(min - max) ) + 0.10;
+        var y = Math.round((percentage *200) + 5);
+        ctx.beginPath();
+        ctx.strokeStyle = colorhighlight;
+        ctx.fillStyle = colorhighlight;
+        ctx.moveTo(5, y - 5);
+        ctx.lineTo(10, y);
+        ctx.lineTo(5, y + 5);
+        ctx.lineTo(5, y - 5);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+
+        //ctx.beginPath();
+        //ctx.moveTo(10, y);
+        //ctx.lineTo(40, y);
+        //ctx.stroke();
+        //ctx.closePath();
+    }
+
+    canvas.addEventListener("mousemove", (function (e) {
+
+            var labels = [
+                "Significantly up regulated",
+                "Non significantly up regulated",
+                "Not found",
+                "Non significantly down regulated",
+                "Significantly down regulated"
+            ];
+
+            // Returns the size of an element and its position relative to the viewport.
+            var rect = e.target.getBoundingClientRect();
+            var y2 = e.clientY - rect.top;
+
+            var y = e.pageY - $('#legendCanvasFlag').offset().top;
+
+            console.log("y is" + y, "y2 is" + y2);
+
+            var stepHeight = 40;
+
+            // Returns the integer part of a number by removing any fractional digits.
+            var scaleIndex = Math.trunc((y / stepHeight));
+            //if (hoveredScaleIndex != scaleIndex) {
+            console.log(scaleIndex);
+            canvas.title = labels[scaleIndex];
+            //hoveredScaleIndex = scaleIndex;
+            //}
+        })
+    );
+}
 
