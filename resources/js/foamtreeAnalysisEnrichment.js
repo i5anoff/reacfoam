@@ -2,7 +2,7 @@
  * Created by Chuqiao on 07/03/19.
  */
 
-function foamtreeAnalysisStarts(anaData) {
+function foamtreeEnrichmentAnalysis(anaData) {
 
     if ( sel !== null){
         addSel(anaData);
@@ -190,7 +190,7 @@ function foamtreeAnalysisStarts(anaData) {
             return
         }
         selected = selectedGroup.pValue;
-        drawOver(selected, hovered)
+        drawEnrichmentFlag(selected, hovered)
     });
 
     foamtree.on("groupHover", function (event) {
@@ -199,6 +199,6 @@ function foamtreeAnalysisStarts(anaData) {
             return;
         }
         var hovered = hoveredGroup.pValue;
-        drawOver(selected, hovered)
+        drawEnrichmentFlag(selected, hovered)
     });
 }

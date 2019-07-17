@@ -15,11 +15,11 @@ function foamtreeLoading(){
 
     $(".waiting").show();
     foamtreeWithFlg(flg,speciesDataLocation,topSpeciesDataLocation);
-}
+};
 
 function foamtreeAnalysis(analysisParam){
 
-    function extractDataFromToken(response) {
+    var getEnrichmentDataFromToken = function (response) {
 
         // Read external Token data and save to key=>value pair R-HSA-5653656 =>1.1102230246251565e-16
         var responseFromToken = {};
@@ -28,38 +28,10 @@ function foamtreeAnalysis(analysisParam){
             responseFromToken[val.stId] = val.entities.pValue;
         });
 
-        foamtreeAnaWithFlg(flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken, analysisParam );
-    }
+        foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken, analysisParam );
+    };
 
-    function extractExpDataFromToken(response) {
-
-        // Create columnArray of expression data sets to be added
-        var columnArray = [];
-        var columnNames = response.expressionSummary.columnNames;
-        for (var key in columnNames) {columnArray.push(columnNames[key])}
-
-        // Get expression column data form token and save to key=>value pair R-HSA-5653656 => exp {...}
-        // and save the pValue to key=>value pair R-HSA-5653656 => 1.1102230246251565e-16
-        var columnNameResponse = {};
-        var pvalueResponse = {};
-        $.each(response.pathways, function (key, val) {
-            pvalueResponse[val.stId] = val.entities.pValue;
-            columnNameResponse[val.stId] = val.entities.exp;
-            var exp = val.entities.exp;
-            $.each(exp, function(key){
-                exp[columnNames[key]] = exp[key];
-                delete exp[key];
-            });
-        });
-
-        // Min and max value from token, the min max value in color bar
-        var min = response.expressionSummary.min;
-        var max = response.expressionSummary.max;
-
-        foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray);
-    }
-
-    function extractGSADataFromToken(response) {
+    var getExpressionDataFromToken = function (response) {
 
         // Create columnArray of expression data sets to be added
         var columnArray = [];
@@ -84,8 +56,36 @@ function foamtreeAnalysis(analysisParam){
         var min = response.expressionSummary.min;
         var max = response.expressionSummary.max;
 
-        foamtreeAnaGSAWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray);
-    }
+        foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray);
+    };
+
+    var getRegulationDataFromToken = function(response) {
+
+        // Create columnArray of expression data sets to be added
+        var columnArray = [];
+        var columnNames = response.expressionSummary.columnNames;
+        for (var key in columnNames) {columnArray.push(columnNames[key])}
+
+        // Get expression column data form token and save to key=>value pair R-HSA-5653656 => exp {...}
+        // and save the pValue to key=>value pair R-HSA-5653656 => 1.1102230246251565e-16
+        var columnNameResponse = {};
+        var pvalueResponse = {};
+        $.each(response.pathways, function (key, val) {
+            pvalueResponse[val.stId] = val.entities.pValue;
+            columnNameResponse[val.stId] = val.entities.exp;
+            var exp = val.entities.exp;
+            $.each(exp, function(key){
+                exp[columnNames[key]] = exp[key];
+                delete exp[key];
+            });
+        });
+
+        // Min and max value from token, the min max value in color bar
+        var min = response.expressionSummary.min;
+        var max = response.expressionSummary.max;
+
+        foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray);
+    };
 
     $.ajax({
         // TODO PARSE FILTER PARAM -- FILTER=pValue:0.88$species:9606
@@ -99,16 +99,19 @@ function foamtreeAnalysis(analysisParam){
         success: function (json) {
             // TODO switch case
             var type = json.type;
-            if ( type == "OVERREPRESENTATION"){
-                extractDataFromToken(json);
-            } else if ( type == "EXPRESSION"){
-                extractExpDataFromToken(json);
-            } else if ( type == "GSA_REGULATION") {
-                extractGSADataFromToken(json);
+            switch (type) {
+                case "OVERREPRESENTATION":
+                    getEnrichmentDataFromToken(json);
+                    break;
+                case "EXPRESSION":
+                    getExpressionDataFromToken(json);
+                    break;
+                case "GSA_REGULATION":
+                    getRegulationDataFromToken(json);
+                    break;
+                default:
+                    alert("Unable to load '" + type + "' analysis");
             }
-            //else {
-            //    alert("Unable to load '" + type + "' analysis");
-            //}
         },
         error: function () {
             alert("data not found");
@@ -119,4 +122,4 @@ function foamtreeAnalysis(analysisParam){
             foamtreeLoading();
         }
     });
-}
+};

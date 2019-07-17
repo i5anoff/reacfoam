@@ -2,7 +2,7 @@
  * Created by Chuqiao on 19/5/9.
  */
 
-function foamtreeExpStarts(expAnaData, min, max, columnArray) {
+function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
 
     if ( sel !== null){
         addSel(expAnaData);
@@ -284,7 +284,7 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
             return
         }
         selected = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05) )? event.group.exp[column]: null;
-        drawExp(selected, hovered, min, max)
+        drawExpressionFlag(selected, hovered, min, max)
     });
 
     foamtree.on("groupHover", function (event) {
@@ -294,6 +294,6 @@ function foamtreeExpStarts(expAnaData, min, max, columnArray) {
             return;
         }
         var hovered = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05)) ? event.group.exp[column]: null;
-        drawExp(selected, hovered, min, max)
+        drawExpressionFlag(selected, hovered, min, max)
     });
 }

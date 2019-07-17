@@ -57,11 +57,11 @@ var colorMax = ColorProfileEnum.properties[profileSelected].max;
 var colorStop = ColorProfileEnum.properties[profileSelected].stop;
 
 var colorSelection = ColorProfileEnum.properties[profileSelected].selection;
-var colorhighlight = ColorProfileEnum.properties[profileSelected].highlight;
+var colorHighlight = ColorProfileEnum.properties[profileSelected].highlight;
 
-
-var colorMap = new Map();
-colorMap.set(2, threeGradient(0.0, colorMinExp, colorMaxExp, colorStopExp))
+// The Color Map object holds key-value pairs and is used for Regulation analysis color legend
+var colorMapInReg = new Map();
+colorMapInReg.set(2, threeGradient(0.0, colorMinExp, colorMaxExp, colorStopExp))
     .set( 1, threeGradient(0.25, colorMinExp, colorMaxExp, colorStopExp))
     .set( 0, getColorNotFound(threeGradient(0.5, colorMinExp, colorMaxExp, colorStopExp)))
     .set(-1, threeGradient(0.75, colorMinExp, colorMaxExp, colorStopExp))
@@ -73,7 +73,8 @@ var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : nul
 var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
 var countFlaggedItems;
 
-var CONTENT_SERVICE = "/ContentService";
+
+const contentService = "/ContentService";
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
@@ -131,6 +132,33 @@ function threeGradient(ratio, ColorStart, ColorEnd, ColorMiddle) {
     return twoColor
 }
 
+// Add overrepresentation (Enrichment) data analysis result to default data
+function addAnaResult(dataFromToken, token, defaultFoamtreeData){
+
+    // Add Pvalue and analysis url to group
+    defaultFoamtreeData.forEach(addPvalueAndUrlToGroup);
+    function addPvalueAndUrlToGroup(group) {
+
+        // Add pValue and analysis url top 1 level
+        ( dataFromToken[group.stId] !=null) ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': null, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
+
+        // Add pValue and analysis url to child hierarchical level
+        if (group.groups && group.groups.length > 0) {
+            group.groups.forEach(addPvalueAndUrlToGroup);
+
+            for (var i =0; i < group.groups.length; i++){
+                if (dataFromToken[group.groups[i].stId] != null) {
+                    Object.assign( group.groups[i], {'pValue': dataFromToken[group.groups[i].stId],'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
+                } else {
+                    Object.assign( group.groups[i], {'pValue': null, 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
+                }
+            }
+        }
+    }
+
+    return defaultFoamtreeData
+}
+
 // Add expression data analysis result to default data
 function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamtreeData){
 
@@ -177,33 +205,6 @@ function addExpAnaResult(columnNameResponse, pvalueResponse, token, defaultFoamt
 
     return defaultFoamtreeData
 
-}
-
-// Add overrepresentation data analysis result to default data
-function addAnaResult(dataFromToken, token, defaultFoamtreeData){
-
-    // Add Pvalue and analysis url to group
-    defaultFoamtreeData.forEach(addPvalueAndUrlToGroup);
-    function addPvalueAndUrlToGroup(group) {
-
-        // Add pValue and analysis url top 1 level
-        ( dataFromToken[group.stId] !=null) ?  Object.assign (group, {'pValue': dataFromToken[group.stId], 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token }) :Object.assign (group, {'pValue': null, 'url': group.url+ "&DTAB=AN&ANALYSIS=" + token});
-
-        // Add pValue and analysis url to child hierarchical level
-        if (group.groups && group.groups.length > 0) {
-            group.groups.forEach(addPvalueAndUrlToGroup);
-
-            for (var i =0; i < group.groups.length; i++){
-                if (dataFromToken[group.groups[i].stId] != null) {
-                    Object.assign( group.groups[i], {'pValue': dataFromToken[group.groups[i].stId],'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
-                } else {
-                    Object.assign( group.groups[i], {'pValue': null, 'url': group.groups[i].url + "&DTAB=AN&ANALYSIS=" + token});
-                }
-            }
-        }
-    }
-
-    return defaultFoamtreeData
 }
 
 // Add selected pathway
@@ -308,7 +309,7 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
 
     // Add flag pathways conditionally and push to Ajax calls array
     if(flg !== null){
-        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -336,8 +337,8 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
     );
 }
 
-// Overrepresentation analysis
-function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
+// Overrepresentation (Enrichment)analysis
+function foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
 
     var flagStId = [];
     var deferreds = [];
@@ -350,7 +351,7 @@ function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, r
     });
 
     if(flg !== null){
-        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -369,11 +370,11 @@ function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, r
                 if(flg !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     var anaData = addAnaResult(responseFromToken, analysisParam, foamtreeDataWithFlg);
-                    foamtreeAnalysisStarts(anaData);
+                    foamtreeEnrichmentAnalysis(anaData);
                     $(".waiting").hide();
                 } else {
                     var anaDataNoFlg = addAnaResult(responseFromToken, analysisParam, datasetInFoamtree);
-                    foamtreeAnalysisStarts(anaDataNoFlg);
+                    foamtreeEnrichmentAnalysis(anaDataNoFlg);
                     $(".waiting").hide();
                 }
             }
@@ -382,7 +383,53 @@ function foamtreeAnaWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, r
 }
 
 // Expression analysis
-function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+function foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+
+    var flagStId = [];
+    var deferreds = [];
+
+    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
+        speciesData = data;
+    });
+    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
+        topSpeciesData = topData;
+    });
+
+    if(flg!== null){
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+            data.llps.forEach(function(val) {
+                flagStId.push(val);
+            });
+        });
+        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
+
+    } else{
+        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    }
+
+    $.when.apply( $, deferreds)
+        .then( function(){
+            if ( typeof speciesData && topSpeciesData !== "undefined") {
+
+                datasetInFoamtree = getData(speciesData, topSpeciesData);
+
+                if(flg !== null){
+                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
+                    var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
+                    foamtreeExpressionAnalysis( anaExpData, min, max, columnArray);
+                    $(".waiting").hide();
+                } else {
+                    var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
+                    foamtreeExpressionAnalysis( anaExpDataNoFlg, min, max, columnArray);
+                    $(".waiting").hide();
+                }
+            }
+        }
+    );
+}
+
+// Regulation analysis
+function foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
 
     var flagStId = [];
     var deferreds = [];
@@ -415,11 +462,11 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
                 if(flg !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
-                    foamtreeExpStarts( anaExpData, min, max, columnArray);
+                    foamtreeRegulationAnalysis( anaExpData, min, max, columnArray);
                     $(".waiting").hide();
                 } else {
                     var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
-                    foamtreeExpStarts( anaExpDataNoFlg, min, max, columnArray);
+                    foamtreeRegulationAnalysis( anaExpDataNoFlg, min, max, columnArray);
                     $(".waiting").hide();
                 }
             }
@@ -427,64 +474,27 @@ function foamtreeAnaExpWithFlg( flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
-// GSA analysis
-function foamtreeAnaGSAWithFlg( flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
-
-    var flagStId = [];
-    var deferreds = [];
-
-    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
-        speciesData = data;
-    });
-    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
-        topSpeciesData = topData;
-    });
-
-    if(flg!== null){
-        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
-            data.llps.forEach(function(val) {
-                flagStId.push(val);
-            });
-        });
-        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
-
-    } else{
-        deferreds.push(dfSpeciesData, dfTopSpeciesData);
-    }
-
-    $.when.apply( $, deferreds)
-        .then( function(){
-            if ( typeof speciesData && topSpeciesData !== "undefined") {
-
-                datasetInFoamtree = getData(speciesData, topSpeciesData);
-
-                if(flg !== null){
-                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
-                    var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
-                    foamtreeGSAStarts( anaExpData, min, max, columnArray);
-                    $(".waiting").hide();
-                } else {
-                    var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
-                    foamtreeGSAStarts( anaExpDataNoFlg, min, max, columnArray);
-                    $(".waiting").hide();
-                }
-            }
-        }
-    );
+// RGB color to HEX
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
 }
 
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
 // Create canvas
 function createCanvas(colorMin, colorStop, colorMax, min, max){
 
-    var topLabel = (max || max == 0 )? max.toExponential(2).replace("e+","E").replace(".00", ""): 0;
-    var bottomLabel= (min || min == 0 )? min.toExponential(2).replace("e+","E").replace(".00", ""): 0.05;
+    var topLabel = (max || max == 0 )? max.toExponential(2).replace("e+", "E").replace(".00", ""): 0;
+    var bottomLabel= (min || min == 0 )? min.toExponential(2).replace("e+", "E").replace(".00", ""): 0.05;
 
     $(".inlineLabelTop").text(topLabel);
     $(".inlineLabelBottom").text(bottomLabel);
 
-    var canvas = document.getElementById('legendCanvasGradient');
-    var ctx = canvas.getContext('2d');
+    var canvas = document.getElementById("legendCanvasGradient");
+    var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(0, 0, 30, 200);
 
     gradient.addColorStop(0, colorMin);
@@ -493,24 +503,24 @@ function createCanvas(colorMin, colorStop, colorMax, min, max){
     if (colorStop){
         gradient.addColorStop(0.5, colorStop);
     }
-    ctx.clearRect(0, 0, 50,200);
+    ctx.clearRect(0, 0, 50, 200);
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.fillRect(0, 0, 30, 200);
     ctx.closePath();
 }
 
-// Create canvas
-function createGSACanvas(colorMap){
+// Create Regulation canvas
+function createRegCanvas(colorMap){
 
     var topLabel = "Up-regulated" ;
-    var bottomLabel= "Down-regulated";
+    var bottomLabel = "Down-regulated";
 
     $(".inlineLabelTop").text(topLabel).addClass("adjustInlineLabelTop");
     $(".inlineLabelBottom").text(bottomLabel).addClass("adjustInlineLabelBottom");
 
     var canvas = document.getElementById("legendCanvasGradient");
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext("2d");
 
     var height = 40;
     var i = 0;
@@ -526,12 +536,13 @@ function createGSACanvas(colorMap){
             colorMap.get(key).red+','+
             colorMap.get(key).green+','+
             colorMap.get(key).blue+')';
+
         ctx.beginPath();
         ctx.fillRect(0, i * height, 30, height);
         ctx.closePath();
 
         // Symbols
-        ctx.shadowColor =("rgba(0,0,0,0.5)");
+        ctx.shadowColor = ("rgba(0,0,0,0.5)");
         ctx.shadowBlur = 4;
         ctx.fillStyle = "#FFFFFF";
         ctx.setFont = "bold 13px Arial";
@@ -544,35 +555,25 @@ function createGSACanvas(colorMap){
 
 }
 
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
+// Assign not found color to GSA analysis results
 function getColorNotFound(color){
 
+    // Gray
     var  colorNotFound = {red: 128, green: 128, blue: 128};
 
     var hexColor = rgbToHex(color.red, color.green, color.blue);
 
-    if ( hexColor == "#56d7ee"){
-        return colorNotFound
-    }
+    if (hexColor == "#56d7ee"){ return colorNotFound }
 
-    if ( hexColor == "#c97c1a"){
-        return colorNotFound
-    }
+    if (hexColor == "#c97c1a"){ return colorNotFound }
+
     return color
 }
 
-// Draw flag when give a overrepresentation analysis
-function drawOver(selected, hovered){
-    var canvas = document.getElementById('legendCanvasFlag');
-    var ctx = canvas.getContext('2d');
+// Draw flag when give a overrepresentation(Enrichment) analysis
+function drawEnrichmentFlag(selected, hovered){
+    var canvas = document.getElementById("legendCanvasFlag");
+    var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
     ctx.clearRect(0, 0, 50, 210);
@@ -606,8 +607,8 @@ function drawOver(selected, hovered){
         var percentage = hovered / 0.05;
         var y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
-        ctx.strokeStyle = colorhighlight;
-        ctx.fillStyle = colorhighlight;
+        ctx.strokeStyle = colorHighlight;
+        ctx.fillStyle = colorHighlight;
         ctx.moveTo(5, y - 5);
         ctx.lineTo(10, y);
         ctx.lineTo(5, y + 5);
@@ -625,9 +626,9 @@ function drawOver(selected, hovered){
 }
 
 // Draw flag when give a expression analysis
-function drawExp(selected, hovered, min, max){
-    var canvas = document.getElementById('legendCanvasFlag');
-    var ctx = canvas.getContext('2d');
+function drawExpressionFlag(selected, hovered, min, max){
+    var canvas = document.getElementById("legendCanvasFlag");
+    var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
     ctx.clearRect(0, 0, 50, 210);
@@ -657,12 +658,12 @@ function drawExp(selected, hovered, min, max){
         ctx.stroke();
         ctx.closePath();
     }
-    if (hovered !==null ) {
+    if (hovered !== null ) {
         var percentage = 1 - ((hovered - min) / (max - min));
-        var y = Math.round((percentage *200) + 5);
+        var y = Math.round((percentage * 200 ) + 5);
         ctx.beginPath();
-        ctx.strokeStyle = colorhighlight;
-        ctx.fillStyle = colorhighlight;
+        ctx.strokeStyle = colorHighlight;
+        ctx.fillStyle = colorHighlight;
         ctx.moveTo(5, y - 5);
         ctx.lineTo(10, y);
         ctx.lineTo(5, y + 5);
@@ -679,10 +680,10 @@ function drawExp(selected, hovered, min, max){
     }
 }
 
-// Draw flag when give a expression analysis
-function drawGsa(selected, hovered, min, max){
-    var canvas = document.getElementById('legendCanvasFlag');
-    var ctx = canvas.getContext('2d');
+// Draw flag when give a regulation analysis
+function drawRegulationFlag(selected, hovered, min, max){
+    var canvas = document.getElementById("legendCanvasFlag");
+    var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
 
 
@@ -690,8 +691,8 @@ function drawGsa(selected, hovered, min, max){
     ctx.fillStyle = gradient;
 
     if (selected !== null) {
-        var percentage =( (selected - max) * (0.90 - 0.10)/(min - max) ) + 0.10;
-        var y = Math.round((percentage *200 ) + 5);
+        var percentage = ( (selected - max) * (0.90 - 0.10) / (min - max)) + 0.10;
+        var y = Math.round((percentage * 200 ) + 5);
         ctx.beginPath();
         ctx.fillRect(10, 0, 30, 200);
         ctx.closePath();
@@ -707,19 +708,13 @@ function drawGsa(selected, hovered, min, max){
         ctx.stroke();
         ctx.closePath();
 
-        //ctx.beginPath();
-        //ctx.moveTo(10, y);
-        //ctx.lineTo(40, y);
-        //ctx.stroke();
-        //ctx.closePath();
     }
     if (hovered !==null ) {
-
         var percentage =( (hovered - max) * (0.90 - 0.10)/(min - max) ) + 0.10;
         var y = Math.round((percentage *200) + 5);
         ctx.beginPath();
-        ctx.strokeStyle = colorhighlight;
-        ctx.fillStyle = colorhighlight;
+        ctx.strokeStyle = colorHighlight;
+        ctx.fillStyle = colorHighlight;
         ctx.moveTo(5, y - 5);
         ctx.lineTo(10, y);
         ctx.lineTo(5, y + 5);
@@ -727,12 +722,6 @@ function drawGsa(selected, hovered, min, max){
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
-
-        //ctx.beginPath();
-        //ctx.moveTo(10, y);
-        //ctx.lineTo(40, y);
-        //ctx.stroke();
-        //ctx.closePath();
     }
 
     canvas.addEventListener("mousemove", (function (e) {
@@ -745,23 +734,16 @@ function drawGsa(selected, hovered, min, max){
                 "Significantly down regulated"
             ];
 
-            // Returns the size of an element and its position relative to the viewport.
+            /*  Returns the size of an element and its position relative to the viewport
+             rect is a DOMRect object with eight position properties
+             * */
             var rect = e.target.getBoundingClientRect();
-            var y2 = e.clientY - rect.top;
-
-            var y = e.pageY - $('#legendCanvasFlag').offset().top;
-
-            console.log("y is" + y, "y2 is" + y2);
-
+            var y = e.clientY - rect.top;
             var stepHeight = 40;
 
             // Returns the integer part of a number by removing any fractional digits.
             var scaleIndex = Math.trunc((y / stepHeight));
-            //if (hoveredScaleIndex != scaleIndex) {
-            console.log(scaleIndex);
             canvas.title = labels[scaleIndex];
-            //hoveredScaleIndex = scaleIndex;
-            //}
         })
     );
 }
