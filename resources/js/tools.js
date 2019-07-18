@@ -70,11 +70,11 @@ colorMapInReg.set(2, threeGradient(0.0, colorMinExp, colorMaxExp, colorStopExp))
 
 // Get selected stId from url
 var sel = typeof getUrlVars()["sel"] !== "undefined" ? getUrlVars()["sel"] : null;
-var flg = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+var flag = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
 var countFlaggedItems;
 
 
-const contentService = "/ContentService";
+const contentService = "https://dev.reactome.org/ContentService";
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
@@ -294,7 +294,7 @@ function findPathBystId(stId, obj, path) {
 }
 
 // Default foamtree
-function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
+function foamtreeWithFlg(flag, speciesDataLocation, topSpeciesDataLocation ){
 
     var flagStId = [];
     // Ajax calls container
@@ -308,8 +308,8 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
     });
 
     // Add flag pathways conditionally and push to Ajax calls array
-    if(flg !== null){
-        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+    if(flag !== null){
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flag + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -319,12 +319,16 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
     } else {
         deferreds.push(dfSpeciesData, dfTopSpeciesData);
     }
-    $.when.apply( $, deferreds)// Same as $.when.apply( dfSpeciesData, dfTopSpeciesData, dfFlag )
+    /* $.when.apply($, processItemsDeferred).then(everythingDone).fail(noGood),
+    * everythingDone isn't called in case of any reject
+    * Same as $.when.apply( dfSpeciesData, dfTopSpeciesData, dfFlag )
+    * */
+    $.when.apply( $, deferreds)//
         .then( function(){
             if ( typeof speciesData && topSpeciesData !== "undefined") {
                 datasetInFoamtree = getData(speciesData, topSpeciesData);
 
-                if(flg !== null){
+                if(flag !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     foamtreeStarts(foamtreeDataWithFlg);
                     $(".waiting").hide();
@@ -338,7 +342,7 @@ function foamtreeWithFlg(flg, speciesDataLocation, topSpeciesDataLocation ){
 }
 
 // Overrepresentation (Enrichment)analysis
-function foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
+function foamtreeEnricmentAnahWithFlag(type, flag, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
 
     var flagStId = [];
     var deferreds = [];
@@ -350,8 +354,8 @@ function foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataL
         topSpeciesData = topData;
     });
 
-    if(flg !== null){
-        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+    if(flag !== null){
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flag + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -367,14 +371,14 @@ function foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataL
 
                 datasetInFoamtree = getData(speciesData, topSpeciesData);
 
-                if(flg !== null){
+                if(flag !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     var anaData = addAnaResult(responseFromToken, analysisParam, foamtreeDataWithFlg);
-                    foamtreeEnrichmentAnalysis(anaData);
+                    foamtreeEnrichmentAnalysis(type, anaData);
                     $(".waiting").hide();
                 } else {
                     var anaDataNoFlg = addAnaResult(responseFromToken, analysisParam, datasetInFoamtree);
-                    foamtreeEnrichmentAnalysis(anaDataNoFlg);
+                    foamtreeEnrichmentAnalysis(type, anaDataNoFlg);
                     $(".waiting").hide();
                 }
             }
@@ -383,7 +387,7 @@ function foamtreeEnricmentAnahWithFlag(flg, speciesDataLocation, topSpeciesDataL
 }
 
 // Expression analysis
-function foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+function foamtreeExpAnaWithFlag(type, flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
 
     var flagStId = [];
     var deferreds = [];
@@ -395,8 +399,8 @@ function foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
         topSpeciesData = topData;
     });
 
-    if(flg!== null){
-        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
+    if(flag!== null){
+        var dfFlag = $.getJSON(contentService + "/search/fireworks/flag?query=" + flag + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
             });
@@ -413,14 +417,14 @@ function foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
 
                 datasetInFoamtree = getData(speciesData, topSpeciesData);
 
-                if(flg !== null){
+                if(flag !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
-                    foamtreeExpressionAnalysis( anaExpData, min, max, columnArray);
+                    foamtreeExpressionAnalysis(type, anaExpData, min, max, columnArray);
                     $(".waiting").hide();
                 } else {
                     var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
-                    foamtreeExpressionAnalysis( anaExpDataNoFlg, min, max, columnArray);
+                    foamtreeExpressionAnalysis(type, anaExpDataNoFlg, min, max, columnArray);
                     $(".waiting").hide();
                 }
             }
@@ -429,7 +433,7 @@ function foamtreeExpAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
 }
 
 // Regulation analysis
-function foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+function foamtreeRegAnaWithFlag(flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
 
     var flagStId = [];
     var deferreds = [];
@@ -441,7 +445,7 @@ function foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
         topSpeciesData = topData;
     });
 
-    if(flg!== null){
+    if(flag!== null){
         var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
             data.llps.forEach(function(val) {
                 flagStId.push(val);
@@ -459,7 +463,7 @@ function foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
 
                 datasetInFoamtree = getData(speciesData, topSpeciesData);
 
-                if(flg !== null){
+                if(flag !== null){
                     var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
                     var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
                     foamtreeRegulationAnalysis( anaExpData, min, max, columnArray);
@@ -474,18 +478,8 @@ function foamtreeRegAnaWithFlag(flg, speciesDataLocation, topSpeciesDataLocation
     );
 }
 
-// RGB color to HEX
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-// Create canvas
-function createCanvas(colorMin, colorStop, colorMax, min, max){
+// Create expression and enrichment canvas
+function createExpCanvas(colorMin, colorStop, colorMax, min, max){
 
     var topLabel = (max || max == 0 )? max.toExponential(2).replace("e+", "E").replace(".00", ""): 0;
     var bottomLabel= (min || min == 0 )? min.toExponential(2).replace("e+", "E").replace(".00", ""): 0.05;
@@ -510,7 +504,7 @@ function createCanvas(colorMin, colorStop, colorMax, min, max){
     ctx.closePath();
 }
 
-// Create Regulation canvas
+// Create regulation canvas
 function createRegCanvas(colorMap){
 
     var topLabel = "Up-regulated" ;
@@ -555,19 +549,33 @@ function createRegCanvas(colorMap){
 
 }
 
-// Assign not found color to GSA analysis results
+// Create canvas and fill gradient
+function createCanvas(type, colorMinExp, colorStopExp, colorMaxExp, min, max){
+    $("#colorLegend").show();
+
+    if (type == "OVERREPRESENTATION"){
+        createExpCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
+    }
+    if (type == "EXPRESSION"){
+        createExpCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
+    }
+    if (type == "GSA_REGULATION"){
+        createRegCanvas(colorMapInReg);
+    }
+}
+
+// Assign not found color to Regulation analysis results
 function getColorNotFound(color){
 
-    // Gray
-    var  colorNotFound = {red: 128, green: 128, blue: 128};
+    // Returns the converted grayscale Color based on this formula
+    var g = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue);
 
-    var hexColor = rgbToHex(color.red, color.green, color.blue);
-
-    if (hexColor == "#56d7ee"){ return colorNotFound }
-
-    if (hexColor == "#c97c1a"){ return colorNotFound }
-
-    return color
+    var gray =  {
+        red : Math.floor(g),
+        green : Math.floor(g),
+        blue : Math.floor(g)
+    };
+    return gray;
 }
 
 // Draw flag when give a overrepresentation(Enrichment) analysis

@@ -2,7 +2,7 @@
  * Created by Chuqiao on 07/03/19.
  */
 
-function foamtreeEnrichmentAnalysis(anaData) {
+function foamtreeEnrichmentAnalysis(type, anaData) {
 
     if ( sel !== null){
         addSel(anaData);
@@ -84,7 +84,7 @@ function foamtreeEnrichmentAnalysis(anaData) {
     CarrotSearchFoamTree.hints(foamtree);
 
     // Switching color profiles by color param from url and save to profileSelected
-    function setColor(flgNew){
+    function setColor(flagNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
                 var pValue = props.group.pValue;
@@ -108,7 +108,7 @@ function foamtreeEnrichmentAnalysis(anaData) {
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
                 }
                 // Add flag color
-                if (props.group.flg && flgNew){
+                if (props.group.flg && flagNew){
                     vars.labelColor =ColorProfileEnum.properties[profileSelected].flag;
                 }else{
                     vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
@@ -118,14 +118,68 @@ function foamtreeEnrichmentAnalysis(anaData) {
             groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
         });
     }
-    setColor(flg);
+    setColor(flag);
+
+    // Add flag bar
+    if (flag !== null){
+        $("#flagBar").show();
+        $("#container").addClass("adjustHeightwithFlg");
+        var span = document.createElement("span");
+        var textnode = document.createTextNode(flag+ " - " + countFlaggedItems + " pathways flagged");
+        span.appendChild(textnode);
+        flagPathway.appendChild(span);
+    }
+    // Clear flag and redraw foamtree
+    $("button[name=clearFlg]").click(function () {
+        var url = location.href.replace("&flg="+flag, "").replace("?flg="+flag, "").replace("flg="+flag, "");
+        window.history.pushState(null, null, url);
+
+        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(flgAfterClear);
+        foamtree.redraw();
+
+        $("#flagBar").hide();
+        $("#container").removeClass("adjustHeightwithFlg");
+    });
+    // Enable browser when after using pushstate
+    window.addEventListener("popstate", function() {
+        window.location.href = location.href;
+    });
+
+    // Create canvas and fill gradient
+    $("#colorLegend").show();
+    var min = null;
+    var max = null;
+    //createCanvas(colorMin, colorStop, colorMax, min, max);
+    createCanvas(type,colorMin, colorStop, colorMax, min, max);
+
+    // Draw flags when click or hover a group on canvas
+    var selected = null;
+    var hovered = null;
+    foamtree.on("groupClick", function (event) {
+        var selectedGroup = event.group;
+        if (!selectedGroup){
+            return
+        }
+        selected = selectedGroup.pValue;
+        drawEnrichmentFlag(selected, hovered)
+    });
+
+    foamtree.on("groupHover", function (event) {
+        var hoveredGroup = event.group;
+        if (!hoveredGroup) {
+            return;
+        }
+        var hovered = hoveredGroup.pValue;
+        drawEnrichmentFlag(selected, hovered)
+    });
 
     // Switching views
-    document.addEventListener("click", function (e) {
-        if (!e.target.href) {return;}
-        e.preventDefault();
+    document.addEventListener("click", function (event) {
+        if (!event.target.href) {return;}
+        event.preventDefault();
 
-        var href = e.target.href.substring(e.target.href.indexOf("#"));
+        var href = event.target.href.substring(event.target.href.indexOf("#"));
         switch (href) {
             case "#flattened":
                 foamtree.set({stacking: "flattened"});
@@ -148,57 +202,4 @@ function foamtreeEnrichmentAnalysis(anaData) {
             timeout = window.setTimeout(foamtree.resize, 300);
         }
     })());
-
-    // Add flag bar
-    if (flg !== null){
-        $("#flagBar").show();
-        $("#container").addClass("adjustHeightwithFlg");
-        var span = document.createElement("span");
-        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
-        span.appendChild(textnode);
-        flagPathway.appendChild(span);
-    }
-    // Clear flag and redraw foamtree
-    $("button[name=clearFlg]").click(function () {
-        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
-        window.history.pushState(null, null, url);
-
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(flgAfterClear);
-        foamtree.redraw();
-
-        $("#flagBar").hide();
-        $("#container").removeClass("adjustHeightwithFlg");
-    });
-    // Enable browser when after using pushstate
-    window.addEventListener("popstate", function() {
-        window.location.href = location.href;
-    });
-
-    // Create canvas and fill gradient
-    $("#colorLegend").show();
-    var min = null;
-    var max = null;
-    createCanvas(colorMin, colorStop, colorMax, min, max);
-
-    // Draw flags when click or hover a group on canvas
-    var selected = null;
-    var hovered = null;
-    foamtree.on("groupClick", function (event) {
-        var selectedGroup = event.group;
-        if (!selectedGroup){
-            return
-        }
-        selected = selectedGroup.pValue;
-        drawEnrichmentFlag(selected, hovered)
-    });
-
-    foamtree.on("groupHover", function (event) {
-        var hoveredGroup = event.group;
-        if (!hoveredGroup) {
-            return;
-        }
-        var hovered = hoveredGroup.pValue;
-        drawEnrichmentFlag(selected, hovered)
-    });
 }

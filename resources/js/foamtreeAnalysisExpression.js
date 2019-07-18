@@ -2,7 +2,7 @@
  * Created by Chuqiao on 19/5/9.
  */
 
-function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
+function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
 
     if ( sel !== null){
         addSel(expAnaData);
@@ -87,8 +87,19 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
     // Display hints
     CarrotSearchFoamTree.hints(foamtree);
 
+    // Assign proper function to setColor base on analysis type
+    function setColor(type, column, flgNew){
+
+        if (type == "EXPRESSION"){
+            setColorExp.call(this, column, flgNew)
+        }
+        if (type == "GSA_REGULATION"){
+            setColorReg.call(this, column, flgNew)
+        }
+    }
+
     // Set color base on pValue range and columns value
-    function setColor(column, flgNew){
+    var setColorExp = function(column, flagNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
                 if ( props.group.exp !== null) {
@@ -112,7 +123,7 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
                 }
                 // Add flag color
-                if (props.group.flg && flgNew){
+                if (props.group.flg && flagNew){
                     vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
                 } else{
                     vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
@@ -122,7 +133,43 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
         });
         // Schedule a redraw to draw the new colors
         window.setTimeout(foamtree.redraw, 0);
-    }
+    };
+
+    // Set color base on pValue range and columns value
+    var setColorReg = function(column, flagNew){
+        foamtree.set({
+            groupColorDecorator: function (opts, props, vars) {
+                if ( props.group.exp !== null) {
+
+                    var coverage = props.group.exp[column];
+                    var pValue = props.group.pValue;
+
+                    if (pValue !== null && pValue >= 0 && pValue <= 0.05) {
+
+                        vars.groupColor.r = colorMapInReg.get(coverage).red;
+                        vars.groupColor.g = colorMapInReg.get(coverage).green;
+                        vars.groupColor.b = colorMapInReg.get(coverage).blue;
+
+                        vars.groupColor.model = "rgb";
+
+                    } else if ( pValue !== null && pValue > 0.05) {
+                        vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
+                    }
+                } else {
+                    vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
+                }
+                // Add flag color
+                if (props.group.flg && flagNew){
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].flag;
+                } else{
+                    vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
+                }
+            },
+            groupSelectionOutlineColor: ColorProfileEnum.properties[profileSelected].selection
+        });
+        // Schedule a redraw to draw the new colors
+        window.setTimeout(foamtree.redraw, 0);
+    };
 
     // Exp bar array
     for (var j = 0; j < columnArray.length; j++) {
@@ -135,71 +182,38 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
     }
 
     // Expression bar to change color
-    var divs = $('#columnNames>span');
+    var divs = $("#columnNames>span");
     var now = 0;
+    var container =  $("#container");
     $("#expressionBar").show();
-    $("#container").addClass("adjustHeight");
+    container.addClass("adjustHeight");
 
     // Currently shown span
     divs.hide().first().show();
 
     // Get the first item in columnNames
-    var columnFirst = divs.eq(now).show().attr('value');
+    var columnFirst = divs.eq(now).show().attr("value");
     // Use the first item as default coverage value
-    setColor(columnFirst, flg);
+    setColor(type, columnFirst, flag);
 
     // Prev and next button color control
     $("button[name=next]").click(function () {
         divs.eq(now).hide();
         now = (now + 1 < divs.length) ? now + 1 : 0;
         divs.eq(now).show(); // show next
-        var column = divs.eq(now).show().attr('value');
+        var column = divs.eq(now).show().attr("value");
         var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(column, flgAfterClear);
+        setColor(type, column, flgAfterClear);
     });
 
     $("button[name=prev]").click(function () {
         divs.eq(now).hide();
         now = (now > 0) ? now - 1 : divs.length - 1;
         divs.eq(now).show();
-        var column = divs.eq(now).show().attr('value');
+        var column = divs.eq(now).show().attr("value");
         var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(column, flgAfterClear);
+        setColor(type, column, flgAfterClear);
     });
-
-    // Switching views
-    document.addEventListener("click", function (e) {
-        if (!e.target.href) {
-            return;
-        }
-        e.preventDefault();
-        var href = e.target.href.substring(e.target.href.indexOf("#"));
-        switch (href) {
-            case "#flattened":
-                foamtree.set({
-                    stacking: "flattened"
-                });
-                break;
-            case "#hierarchical":
-                foamtree.set({
-                    stacking: "hierarchical"
-                });
-                break;
-        }
-        foamtree.set("dataObject", foamtree.get("dataObject"));
-    });
-
-    // Resize FoamTree on orientation change
-    window.addEventListener("orientationchange", foamtree.resize);
-
-    // Resize on window size changes
-    window.addEventListener("resize", (function () {
-        var timeout;
-        return function () {
-            window.clearTimeout(timeout);
-            timeout = window.setTimeout(foamtree.resize, 300);
-        }
-    })());
 
     // Play button control
     var intervalId = null;
@@ -217,6 +231,7 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
             intervalId = null;
         }
     });
+
     // Pause button control
     $("button[name=pause]").click(function () {
 
@@ -244,35 +259,30 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
     });
 
     // Add flag bar
-    if (flg !== null){
+    if (flag !== null){
         $("#flagBar").show();
-        $("#container").addClass("adjustHeightwithFlg");
+        container.addClass("adjustHeightwithFlg");
         var span = document.createElement("span");
-        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
+        var textnode = document.createTextNode(flag+ " - " + countFlaggedItems + " pathways flagged");
         span.appendChild(textnode);
         flagPathway.appendChild(span);
     }
     // Clear flag and redraw foamtree
     $("button[name=clearFlg]").click(function () {
 
-        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
+        var url = location.href.replace("&flg="+flag, "").replace("?flg="+flag, "").replace("flg="+flag, "");
         window.history.pushState(null, null, url);
 
         var column = divs.eq(now).show().attr('value');
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(column, flgAfterClear);
+        var flagAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(type, column, flagAfterClear);
 
         $("#flagBar").hide();
-        $("#container").removeClass("adjustHeightwithFlg");
-    });
-    // Enable browser when after using pushstate
-    window.addEventListener("popstate", function() {
-        window.location.href = location.href;
+        container.removeClass("adjustHeightwithFlg");
     });
 
     // Create canvas and fill gradient
-    $("#colorLegend").show();
-    createCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
+    createCanvas(type, colorMinExp, colorStopExp, colorMaxExp, min, max);
 
     // Draw flags when click or hover a group on canvas
     var selected = null;
@@ -284,7 +294,12 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
             return
         }
         selected = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05) )? event.group.exp[column]: null;
-        drawExpressionFlag(selected, hovered, min, max)
+        if (type == "EXPRESSION"){
+            drawExpressionFlag(selected, hovered, min, max)
+        } else if (type == "GSA_REGULATION"){
+            drawRegulationFlag(selected, hovered, min, max)
+        }
+        //drawExpressionFlag(selected, hovered, min, max)
     });
 
     foamtree.on("groupHover", function (event) {
@@ -294,6 +309,50 @@ function foamtreeExpressionAnalysis(expAnaData, min, max, columnArray) {
             return;
         }
         var hovered = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05)) ? event.group.exp[column]: null;
-        drawExpressionFlag(selected, hovered, min, max)
+        if (type == "EXPRESSION"){
+            drawExpressionFlag(selected, hovered, min, max)
+        } else if (type == "GSA_REGULATION"){
+            drawRegulationFlag(selected, hovered, min, max)
+        }
+        //drawExpressionFlag(selected, hovered, min, max)
+    });
+
+    // Switching views
+    document.addEventListener("click", function (event) {
+        if (!event.target.href) {
+            return;
+        }
+        event.preventDefault();
+        var href = event.target.href.substring(event.target.href.indexOf("#"));
+        switch (href) {
+            case "#flattened":
+                foamtree.set({
+                    stacking: "flattened"
+                });
+                break;
+            case "#hierarchical":
+                foamtree.set({
+                    stacking: "hierarchical"
+                });
+                break;
+        }
+        foamtree.set("dataObject", foamtree.get("dataObject"));
+    });
+
+    // Resize FoamTree on orientation change
+    window.addEventListener("orientationchange", foamtree.resize);
+
+    // Resize on window size changes
+    window.addEventListener("resize", (function () {
+        var timeout;
+        return function () {
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(foamtree.resize, 300);
+        }
+    })());
+
+    // Enable browser when after using pushstate
+    window.addEventListener("popstate", function() {
+        window.location.href = location.href;
     });
 }

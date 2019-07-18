@@ -105,7 +105,7 @@ function foamtreeStarts(groupsData){
             groupSelectionOutlineColor : ColorProfileEnum.properties[profileSelected].selection
         });
     }
-    setColor(flg);
+    setColor(flag);
 
     CarrotSearchFoamTree.hints(foamtree);
 
@@ -140,11 +140,11 @@ function foamtreeStarts(groupsData){
     })());
 
     // Add flag bar
-    if (flg !== null){
+    if (flag !== null){
         $("#flagBar").show();
         $("#container").addClass("adjustHeightwithFlg");
         var span = document.createElement("span");
-        var textnode = document.createTextNode(flg+ " - " + countFlaggedItems + " pathways flagged");
+        var textnode = document.createTextNode(flag+ " - " + countFlaggedItems + " pathways flagged");
         span.appendChild(textnode);
         flagPathway.appendChild(span);
     }
@@ -152,11 +152,11 @@ function foamtreeStarts(groupsData){
     // Clear flag and redraw foamtree
     $("button[name=clearFlg]").click(function () {
 
-        var url = location.href.replace("&flg="+flg, "").replace("?flg="+flg, "").replace("flg="+flg, "");
+        var url = location.href.replace("&flg="+flag, "").replace("?flg="+flag, "").replace("flg="+flag, "");
         window.history.pushState(null, null, url);
 
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(flgAfterClear);
+        var flagAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(flagAfterClear);
         foamtree.redraw();
 
         $("#flagBar").hide();
