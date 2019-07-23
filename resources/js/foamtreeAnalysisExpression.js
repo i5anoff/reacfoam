@@ -92,13 +92,12 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
 
         if (type == "EXPRESSION"){
             setColorExp.call(this, column, flgNew)
-        }
-        if (type == "GSA_REGULATION"){
+        } else if (type == "GSA_REGULATION"){
             setColorReg.call(this, column, flgNew)
         }
     }
 
-    // Set color base on pValue range and columns value
+    // Set color base on pValue range and columns value in expression analysis
     var setColorExp = function(column, flagNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
@@ -135,7 +134,7 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
         window.setTimeout(foamtree.redraw, 0);
     };
 
-    // Set color base on pValue range and columns value
+    // Set color base on pValue range and columns value in regulation analysis
     var setColorReg = function(column, flagNew){
         foamtree.set({
             groupColorDecorator: function (opts, props, vars) {
@@ -193,6 +192,7 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
 
     // Get the first item in columnNames
     var columnFirst = divs.eq(now).show().attr("value");
+
     // Use the first item as default coverage value
     setColor(type, columnFirst, flag);
 
@@ -202,8 +202,8 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
         now = (now + 1 < divs.length) ? now + 1 : 0;
         divs.eq(now).show(); // show next
         var column = divs.eq(now).show().attr("value");
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(type, column, flgAfterClear);
+        var flagAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(type, column, flagAfterClear);
     });
 
     $("button[name=prev]").click(function () {
@@ -211,8 +211,8 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
         now = (now > 0) ? now - 1 : divs.length - 1;
         divs.eq(now).show();
         var column = divs.eq(now).show().attr("value");
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(type, column, flgAfterClear);
+        var flagAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(type, column, flagAfterClear);
     });
 
     // Play button control
@@ -267,6 +267,7 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
         span.appendChild(textnode);
         flagPathway.appendChild(span);
     }
+
     // Clear flag and redraw foamtree
     $("button[name=clearFlg]").click(function () {
 
@@ -294,12 +295,7 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
             return
         }
         selected = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05) )? event.group.exp[column]: null;
-        if (type == "EXPRESSION"){
-            drawExpressionFlag(selected, hovered, min, max)
-        } else if (type == "GSA_REGULATION"){
-            drawRegulationFlag(selected, hovered, min, max)
-        }
-        //drawExpressionFlag(selected, hovered, min, max)
+       drawFlag(type, selected, hovered, min, max);
     });
 
     foamtree.on("groupHover", function (event) {
@@ -309,12 +305,7 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
             return;
         }
         var hovered = (event.group.exp && (pGroup.pValue!==null && pGroup.pValue <= 0.05)) ? event.group.exp[column]: null;
-        if (type == "EXPRESSION"){
-            drawExpressionFlag(selected, hovered, min, max)
-        } else if (type == "GSA_REGULATION"){
-            drawRegulationFlag(selected, hovered, min, max)
-        }
-        //drawExpressionFlag(selected, hovered, min, max)
+        drawFlag(type, selected, hovered, min, max);
     });
 
     // Switching views

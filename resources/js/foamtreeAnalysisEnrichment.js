@@ -102,15 +102,14 @@ function foamtreeEnrichmentAnalysis(type, anaData) {
                 } else if (pValue !== null && pValue >= 0.05 ) {
                     // Coverage defined, but greater than range
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].hit;
-                }
-                else {
+                } else {
                     // Coverage not defined
                     vars.groupColor = ColorProfileEnum.properties[profileSelected].fadeout;
                 }
                 // Add flag color
                 if (props.group.flg && flagNew){
                     vars.labelColor =ColorProfileEnum.properties[profileSelected].flag;
-                }else{
+                } else {
                     vars.labelColor = ColorProfileEnum.properties[profileSelected].label;
                 }
             },
@@ -134,13 +133,14 @@ function foamtreeEnrichmentAnalysis(type, anaData) {
         var url = location.href.replace("&flg="+flag, "").replace("?flg="+flag, "").replace("flg="+flag, "");
         window.history.pushState(null, null, url);
 
-        var flgAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
-        setColor(flgAfterClear);
+        var flagAfterClear = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : null;
+        setColor(flagAfterClear);
         foamtree.redraw();
 
         $("#flagBar").hide();
         $("#container").removeClass("adjustHeightwithFlg");
     });
+
     // Enable browser when after using pushstate
     window.addEventListener("popstate", function() {
         window.location.href = location.href;
@@ -148,21 +148,27 @@ function foamtreeEnrichmentAnalysis(type, anaData) {
 
     // Create canvas and fill gradient
     $("#colorLegend").show();
-    var min = null;
+
+    // Min and max here are for the label text in gradient canvas
     var max = null;
-    //createCanvas(colorMin, colorStop, colorMax, min, max);
-    createCanvas(type,colorMin, colorStop, colorMax, min, max);
+    var min = null;
+    createCanvas(type, colorMin, colorStop, colorMax, min, max);
 
     // Draw flags when click or hover a group on canvas
     var selected = null;
     var hovered = null;
     foamtree.on("groupClick", function (event) {
         var selectedGroup = event.group;
+
+        // To avoid clik the white space between two borders
         if (!selectedGroup){
             return
         }
+        // Min and max here are for calculate the percentage in Flag canvas
+        var max = 0;
+        var min = 0.05;
         selected = selectedGroup.pValue;
-        drawEnrichmentFlag(selected, hovered)
+        drawFlag(type, selected, hovered, min, max);
     });
 
     foamtree.on("groupHover", function (event) {
@@ -170,8 +176,10 @@ function foamtreeEnrichmentAnalysis(type, anaData) {
         if (!hoveredGroup) {
             return;
         }
+        var max = 0;
+        var min = 0.05;
         var hovered = hoveredGroup.pValue;
-        drawEnrichmentFlag(selected, hovered)
+        drawFlag(type, selected, hovered, min, max);
     });
 
     // Switching views

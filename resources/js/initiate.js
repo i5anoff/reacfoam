@@ -59,34 +59,6 @@ function foamtreeAnalysis(analysisToken){
         foamtreeExpAnaWithFlag(type, flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisToken, min, max, columnArray);
     };
 
-    //var getRegulationDataFromToken = function(response) {
-    //
-    //    // Create columnArray of expression data sets to be added
-    //    var columnArray = [];
-    //    var columnNames = response.expressionSummary.columnNames;
-    //    for (var key in columnNames) {columnArray.push(columnNames[key])}
-    //
-    //    // Get expression column data form token and save to key=>value pair R-HSA-5653656 => exp {...}
-    //    // and save the pValue to key=>value pair R-HSA-5653656 => 1.1102230246251565e-16
-    //    var columnNameResponse = {};
-    //    var pvalueResponse = {};
-    //    $.each(response.pathways, function (key, val) {
-    //        pvalueResponse[val.stId] = val.entities.pValue;
-    //        columnNameResponse[val.stId] = val.entities.exp;
-    //        var exp = val.entities.exp;
-    //        $.each(exp, function(key){
-    //            exp[columnNames[key]] = exp[key];
-    //            delete exp[key];
-    //        });
-    //    });
-    //
-    //    // Min and max value from token, the min max value in color bar
-    //    var min = response.expressionSummary.min;
-    //    var max = response.expressionSummary.max;
-    //
-    //    foamtreeRegAnaWithFlag(flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisToken, min, max, columnArray);
-    //};
-
     $.ajax({
         // TODO PARSE FILTER PARAM -- FILTER=pValue:0.88$species:9606
         //url: "/AnalysisService/token/" + analysisToken + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource="+ getUrlVars()["resource"],
@@ -103,10 +75,7 @@ function foamtreeAnalysis(analysisToken){
                     getEnrichmentDataFromToken(type, json);
                     break;
                 case "EXPRESSION":
-                    getExpressionDataFromToken(type, json);
-                    break;
                 case "GSA_REGULATION":
-                    //getRegulationDataFromToken(json);
                     getExpressionDataFromToken(type, json);
                     break;
                 default:
@@ -122,4 +91,4 @@ function foamtreeAnalysis(analysisToken){
             foamtreeLoading();
         }
     });
-};
+}

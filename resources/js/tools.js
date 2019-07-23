@@ -341,7 +341,7 @@ function foamtreeWithFlg(flag, speciesDataLocation, topSpeciesDataLocation ){
     );
 }
 
-// Overrepresentation (Enrichment)analysis
+// Overrepresentation (Enrichment) analysis
 function foamtreeEnricmentAnahWithFlag(type, flag, speciesDataLocation, topSpeciesDataLocation, responseFromToken , analysisParam){
 
     var flagStId = [];
@@ -386,7 +386,7 @@ function foamtreeEnricmentAnahWithFlag(type, flag, speciesDataLocation, topSpeci
     );
 }
 
-// Expression analysis
+// Expression and Regulation analysis
 function foamtreeExpAnaWithFlag(type, flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
 
     var flagStId = [];
@@ -432,50 +432,21 @@ function foamtreeExpAnaWithFlag(type, flag, speciesDataLocation, topSpeciesDataL
     );
 }
 
-// Regulation analysis
-function foamtreeRegAnaWithFlag(flag, speciesDataLocation, topSpeciesDataLocation, columnNameResponse, pvalueResponse, analysisParam, min, max, columnArray){
+// Create canvas and fill gradient
+function createCanvas(type, colorMinExp, colorStopExp, colorMaxExp, min, max){
 
-    var flagStId = [];
-    var deferreds = [];
-
-    var dfSpeciesData = $.getJSON(speciesDataLocation, function(data) {
-        speciesData = data;
-    });
-    var dfTopSpeciesData =  $.getJSON(topSpeciesDataLocation, function(topData) {
-        topSpeciesData = topData;
-    });
-
-    if(flag!== null){
-        var dfFlag = $.getJSON(CONTENT_SERVICE + "/search/fireworks/flag?query=" + flg + "&species=" + speciesValue.replace("_"," "), function(data) {
-            data.llps.forEach(function(val) {
-                flagStId.push(val);
-            });
-        });
-        deferreds.push(dfSpeciesData, dfTopSpeciesData, dfFlag);
-
-    } else{
-        deferreds.push(dfSpeciesData, dfTopSpeciesData);
+    $("#colorLegend").show();
+    switch (type) {
+        case "OVERREPRESENTATION":
+        case "EXPRESSION":
+            createExpCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
+            break;
+        case "GSA_REGULATION":
+            createRegCanvas(colorMapInReg);
+            break;
+        default:
+            console.log("Unable to load '" + type + "' color legend");
     }
-
-    $.when.apply( $, deferreds)
-        .then( function(){
-            if ( typeof speciesData && topSpeciesData !== "undefined") {
-
-                datasetInFoamtree = getData(speciesData, topSpeciesData);
-
-                if(flag !== null){
-                    var foamtreeDataWithFlg = addFlg(flagStId, datasetInFoamtree);
-                    var anaExpData = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, foamtreeDataWithFlg);
-                    foamtreeRegulationAnalysis( anaExpData, min, max, columnArray);
-                    $(".waiting").hide();
-                } else {
-                    var anaExpDataNoFlg = addExpAnaResult(columnNameResponse, pvalueResponse, analysisParam, datasetInFoamtree);
-                    foamtreeRegulationAnalysis( anaExpDataNoFlg, min, max, columnArray);
-                    $(".waiting").hide();
-                }
-            }
-        }
-    );
 }
 
 // Create expression and enrichment canvas
@@ -549,21 +520,6 @@ function createRegCanvas(colorMap){
 
 }
 
-// Create canvas and fill gradient
-function createCanvas(type, colorMinExp, colorStopExp, colorMaxExp, min, max){
-    $("#colorLegend").show();
-
-    if (type == "OVERREPRESENTATION"){
-        createExpCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
-    }
-    if (type == "EXPRESSION"){
-        createExpCanvas(colorMinExp, colorStopExp, colorMaxExp, min, max);
-    }
-    if (type == "GSA_REGULATION"){
-        createRegCanvas(colorMapInReg);
-    }
-}
-
 // Assign not found color to Regulation analysis results
 function getColorNotFound(color){
 
@@ -578,8 +534,26 @@ function getColorNotFound(color){
     return gray;
 }
 
+// Draw flag
+function drawFlag(type, selected, hovered, min, max){
+
+    switch (type) {
+        case "OVERREPRESENTATION":
+            drawEnrichmentFlag(selected, hovered, min, max);
+            break;
+        case "EXPRESSION":
+            drawExpressionFlag(selected, hovered, min, max);
+            break;
+        case "GSA_REGULATION":
+            drawRegulationFlag(selected, hovered, min, max);
+            break;
+        default:
+            console.log("Unable to draw '" + type + "' flag");
+    }
+}
+
 // Draw flag when give a overrepresentation(Enrichment) analysis
-function drawEnrichmentFlag(selected, hovered){
+function drawEnrichmentFlag(selected, hovered, min, max){
     var canvas = document.getElementById("legendCanvasFlag");
     var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
@@ -587,8 +561,11 @@ function drawEnrichmentFlag(selected, hovered){
     ctx.clearRect(0, 0, 50, 210);
     ctx.fillStyle = gradient;
 
-    if (selected !== null && selected >=0 && selected <= 0.05){
-        var percentage = selected / 0.05;
+    //var max = 0;
+    //var min = 0.05;
+
+    if (selected !== null && selected >= max && selected <= min){
+        var percentage = selected / min;
         var y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
         ctx.fillRect(10, 0, 30, 200);
@@ -611,8 +588,8 @@ function drawEnrichmentFlag(selected, hovered){
         ctx.stroke();
         ctx.closePath();
     }
-    if (hovered !== null && hovered >= 0 && hovered <= 0.05) {
-        var percentage = hovered / 0.05;
+    if (hovered !== null && hovered >= max && hovered <= min) {
+        var percentage = hovered / min;
         var y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
         ctx.strokeStyle = colorHighlight;
