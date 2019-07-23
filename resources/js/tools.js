@@ -74,7 +74,7 @@ var flag = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : nu
 var countFlaggedItems;
 
 
-const contentService = "https://dev.reactome.org/ContentService";
+const contentService = "/ContentService";
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);
