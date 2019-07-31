@@ -109,6 +109,15 @@ function foamtreeStarts(groupsData){
 
     CarrotSearchFoamTree.hints(foamtree);
 
+    // Display export icon
+    $("#export").show();
+
+    // Export an image when click export icon
+    $("button[name=export-button]").click(function () {
+        var type = null;
+        onImageExport(type, foamtree);
+    });
+
     // Switching views
     document.addEventListener("click", function (e) {
         if (!e.target.href) {
@@ -167,5 +176,5 @@ function foamtreeStarts(groupsData){
     window.addEventListener("popstate", function() {
         window.location.href = location.href;
     });
-
 }
+

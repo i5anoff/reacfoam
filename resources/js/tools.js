@@ -733,3 +733,92 @@ function drawRegulationFlag(selected, hovered, min, max){
     );
 }
 
+// Return the current state of the visualization as an image
+function onImageExport(type, foamtree) {
+
+    switch (type) {
+        case "OVERREPRESENTATION":
+        case "EXPRESSION":
+        case "GSA_REGULATION":
+            onImageExportWithColorLegend(foamtree);
+            break;
+        default:
+            // No analysis(color legend bar)
+            onImageExportNoColorLegend(foamtree);
+    }
+}
+
+function onImageExportWithColorLegend(foamtree) {
+
+    var format = "image/jpg";
+    var extension = "jpg";
+    var base64Image = foamtree.get("imageData", {
+        format: format,
+        quality: 0.9,
+        pixelRatio: 2.0, // Use a value larger than 1, such as 2 to create a higher-resolution image
+        backgroundColor: "#fff"
+    });
+
+    // Dynamically Create a Canvas Element
+    var canvasFoamtree = document.createElement('canvas');
+    var ctxFoamtree = canvasFoamtree.getContext('2d');
+
+    // Create an image object to store base64Image
+    var imageObj = new Image();
+
+    // This event handler will be called when the image has finished loading
+    imageObj.onload = function() {
+
+        canvasFoamtree.width  = imageObj.width;
+        canvasFoamtree.height = imageObj.height;
+        ctxFoamtree.imageSmoothingEnabled = true;
+        ctxFoamtree.drawImage(imageObj, 0, 0);
+
+    };
+
+    imageObj.src = base64Image;
+
+
+    // Create colorLegend canvas from a html element
+    var element = document.getElementById("colorLegend");
+    element.setAttribute("style", "border-radius: 0");
+
+    html2canvas(element).then(function (canvas) {
+
+        // Remove width: 50 and height: 250
+        canvas.removeAttribute("style");
+
+        // Draw colorLegend canvas on canvasFoamtree
+        ctxFoamtree.drawImage(canvas, imageObj.width - 100, 70, 70, 300);
+
+        // Export canvas to an image
+        canvasFoamtree.toBlob(function(blob) {
+            saveAs(blob, "Reacfoam." + extension);
+        });
+
+    });
+
+    element.setAttribute("style", "border-radius: 15px");
+}
+
+function onImageExportNoColorLegend(foamtree) {
+
+    var format = "image/jpg";
+    var extension = "jpg";
+
+    var base64Image = foamtree.get("imageData", {
+        format: format,
+        quality: 0.9,
+        pixelRatio: 2.0,
+        backgroundColor: "#fff"
+    });
+
+    var blob = new Blob(
+        [ base64js.toByteArray(base64Image.substring(base64Image.indexOf("base64,") + "base64,".length)) ],
+        { type: format }
+    );
+
+     saveAs(blob, "Reacfoam." + extension);
+}
+
+

@@ -308,6 +308,14 @@ function foamtreeExpressionAnalysis(type, expAnaData, min, max, columnArray) {
         drawFlag(type, selected, hovered, min, max);
     });
 
+    // Display export icon
+    $("#export").show();
+
+    // Export an image when click export icon
+    $("button[name=export-button]").click(function () {
+        onImageExport(type, foamtree);
+    });
+
     // Switching views
     document.addEventListener("click", function (event) {
         if (!event.target.href) {

@@ -13,15 +13,18 @@ body {
     overflow-x: auto;
 }
 
-/*hints*/
+/* hints */
 .visualization-hint .help {
     margin-right: 5px;
 }
 
 .visualization-hint .info{
-    right: 0
+    right: 0;
+    background-color: #58c3e5;
+    top: 4px;
+    font-size: 14px;
 }
-/*spinner*/
+/* spinner */
 .sk-circle {
     margin: auto;
     width: 40px;
@@ -193,7 +196,7 @@ body {
     margin: 0;
 }
 
-/*bottom panel style*/
+/* bottom panel style */
 .bottomPanel {
     display: flex;
     bottom: 10px;
@@ -295,6 +298,36 @@ body {
     background-color: #5491d2;
 }
 
+#export{
+    position: absolute;
+    top: 50px;
+    right: 20px;
+}
+
+.export-button{
+    float: left;
+    background-color: #58c3e5;
+    outline: none;
+    border-radius: 16px;
+    color: white;
+    margin: 0 10px 0 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75);
+    -moz-box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75);
+    box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75);
+}
+.export-image{
+    display: block;
+    height: 32px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-user-drag: none;
+}
+
+
 /* color legend */
 #colorLegend{
     width: 50px;
@@ -302,7 +335,7 @@ body {
     overflow: visible  !important;
     float: right;
     margin-right: 20px;
-    margin-top: 50px;
+    margin-top: 90px;
     background-color: rgba(240, 240, 240, 0.9);
     border: 1px solid lightgray;
     border-radius: 15px;
@@ -387,7 +420,7 @@ body {
     }
 }
 
-/*Google pixel 2 and 2XL / landscape */
+/* Google pixel 2 and 2XL / landscape */
 @media only screen and (device-width: 731px) and (device-height: 411px) and (orientation: landscape){
     #container{
         height: 85%;
@@ -400,7 +433,7 @@ body {
     }
 }
 
-/*iPhone 5 landscape*/
+/* iPhone 5 landscape */
 @media only screen and  (device-width: 568px) and (device-height: 320px) and (orientation: landscape) {
     #container {
         height: 93%;
@@ -447,7 +480,7 @@ body {
         height: 89% !important;
     }
     .adjustHeightwithFlg {
-        /*height: 82% !important;*/
+        /* height: 82% !important; */
         height: 85% !important;
     }
     .bottomPanel > div {

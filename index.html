@@ -37,10 +37,19 @@
         </div>
     </div>
 </div>
+
+<div id = "export" style="display: none">
+    <button name="export-button" class="export-button" title="Export">
+        <div>
+            <img src="resources/images/export.png" width="64px" height="64px" class="export-image">
+        </div>
+    </button>
+</div>
+
 <div id="colorLegend"  style="display:none;">
     <span class="inlineLabelTop"></span>
     <canvas id="legendCanvasGradient" width="30" height="200"></canvas>
-    <canvas id="legendCanvasFlag" width="50px" height="210px"></canvas>
+    <canvas id="legendCanvasFlag" width="50" height="210"></canvas>
     <span class="inlineLabelBottom"></span>
 </div>
 
@@ -63,6 +72,10 @@
         <a href="#flattened">flattened</a> | <a href="#hierarchical">hierarchical</a>
 </div>
 
+<!-- External libraries to help to export visualization to an image  -->
+<script src="lib/foamtree/assets/js/filesaver.min.js"></script>
+<script src="lib/foamtree/assets/js/b64.js"></script>
+<script src="lib/foamtree/assets/js/html2canvas.min.js"></script>
 
 <!-- Include Hammer.js for mobile interactions and touch events. Not required for desktop-only apps. -->
 <script src="lib/foamtree/assets/js/hammer.min.js"></script>

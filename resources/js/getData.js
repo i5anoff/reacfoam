@@ -55,7 +55,6 @@ function getData(data, topData) {
     // Create a dedicated copy for each parent group to remove shared references
     groups = JSON.parse(JSON.stringify(groups));
 
-    addValue(groups);
     function addValue(groups) {
         for (var k = 0; k < groups.length; k++) {
             if (dataStId[groups[k].to]) groups[k] = Object.assign(groups[k], {'stId': dataStId[groups[k].to]});
@@ -66,24 +65,29 @@ function getData(data, topData) {
             delete groups[k].to;
         }
     }
+    addValue(groups);
 
     groups.forEach(addValueToChildren);
     function addValueToChildren(group) {
         if (group.groups && group.groups.length >= 0) {
             group.groups.forEach(addValueToChildren);
-            // TODO define a variable
+
             for (var i = 0; i < group.groups.length; i++) {
+                var groupToIndex = group.groups[i].to;
+
                 // Delete form (parent key) in arrary
                 delete group.groups[i].from;
-                if (dataStId[group.groups[i].to]) group.groups[i] = Object.assign(group.groups[i], {'stId': dataStId[group.groups[i].to]});
-                if (dataName[group.groups[i].to]) group.groups[i] = Object.assign(group.groups[i], {'label': dataName[group.groups[i].to]});
-                if (dataRatio[group.groups[i].to]) group.groups[i] = Object.assign(group.groups[i], {'weight': dataRatio[group.groups[i].to]});
-                if (dataUrl[group.groups[i].to]) group.groups[i] = Object.assign(group.groups[i], {'url': dataUrl[group.groups[i].to]});
-                // Delete to (dbId) in arrary
-                delete group.groups[i].to;
+
+                if (dataStId[groupToIndex]) group.groups[i] = Object.assign(group.groups[i], {'stId': dataStId[groupToIndex]});
+                if (dataName[groupToIndex]) group.groups[i] = Object.assign(group.groups[i], {'label': dataName[groupToIndex]});
+                if (dataRatio[groupToIndex]) group.groups[i] = Object.assign(group.groups[i], {'weight': dataRatio[groupToIndex]});
+                if (dataUrl[groupToIndex]) group.groups[i] = Object.assign(group.groups[i], {'url': dataUrl[groupToIndex]});
+                // Delete to (dbId) in array
+                delete groupToIndex;
             }
         }
     }
+
     return groups
 }
 
