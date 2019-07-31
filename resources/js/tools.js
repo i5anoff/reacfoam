@@ -26,15 +26,6 @@ var SPECIES_MAP = {
     //"48898" : "Bos_taurus"
 };
 
-// Get parameters from URL and save data as key => value pair
-function getUrlVars() {
-    var vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m ,key, value) {
-        vars[key] = value;
-    });
-    return vars
-}
-
 // Get species id from url and fetch the data file locally
 var speciesData, topSpeciesData, datasetInFoamtree;
 var speciesIdFromUrl = typeof getUrlVars()["species"] !== "undefined" ? getUrlVars()["species"] : 48887;
@@ -74,7 +65,16 @@ var flag = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : nu
 var countFlaggedItems;
 
 
-const contentService = "/ContentService";
+const contentService = "https://dev.reactome.org/ContentService";
+
+// Get parameters from URL and save data as key => value pair
+function getUrlVars() {
+    var vars = {};
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m ,key, value) {
+        vars[key] = value;
+    });
+    return vars
+}
 
 /* Set the largest nesting level for debugging and color in red when there is no space to draw
  *  usage: data.forEach(setMaxLevel);

@@ -215,7 +215,6 @@ function foamtreeEnrichmentAnalysis(type, anaData) {
         var timeout;
         return function() {
             window.clearTimeout(timeout);
-            console.log('o');
             timeout = window.setTimeout(foamtree.resize, 300);
         }
     })());

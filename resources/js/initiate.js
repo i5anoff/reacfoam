@@ -61,7 +61,7 @@ function foamtreeAnalysis(analysisToken){
 
     $.ajax({
         // TODO PARSE FILTER PARAM -- FILTER=pValue:0.88$species:9606
-        url: "/AnalysisService/token/" + analysisToken + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource="+ getUrlVars()["resource"],
+        url: "https://dev.reactome.org/AnalysisService/token/" + analysisToken + "/filter/species/"+ speciesIdFromUrl +"?sortBy=ENTITIES_PVALUE&order=ASC&resource="+ getUrlVars()["resource"],
         dataType: "json",
         type: "GET",
         beforeSend:  function() {
