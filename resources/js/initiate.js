@@ -1,6 +1,6 @@
 /**
- * Created by Chuqiao on 19/3/26.
- */
+    * Created by Chuqiao on 19/3/26.
+    */
 window.addEventListener("load", function(){
 
     var analysisToken =  getUrlVars()["analysis"];
@@ -15,7 +15,7 @@ function foamtreeLoading(){
 
     $(".waiting").show();
     foamtreeWithFlg(flag,speciesDataLocation,topSpeciesDataLocation);
-};
+}
 
 function foamtreeAnalysis(analysisToken){
 

@@ -1,6 +1,6 @@
 /**
- * Created by Chuqiao on 19/4/1.
- */
+    * Created by Chuqiao on 19/4/1.
+    */
 
 // species map
 /*
@@ -65,7 +65,7 @@ var flag = typeof getUrlVars()["flg"] !== "undefined" ? getUrlVars()["flg"] : nu
 var countFlaggedItems;
 
 
-const contentService = "https://dev.reactome.org/ContentService";
+const contentService = "/ContentService";
 
 // Get parameters from URL and save data as key => value pair
 function getUrlVars() {
@@ -526,12 +526,11 @@ function getColorNotFound(color){
     // Returns the converted grayscale Color based on this formula
     var g = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue);
 
-    var gray =  {
-        red : Math.floor(g),
-        green : Math.floor(g),
-        blue : Math.floor(g)
+    return {
+        red: Math.floor(g),
+        green: Math.floor(g),
+        blue: Math.floor(g)
     };
-    return gray;
 }
 
 // Draw flag
@@ -554,6 +553,9 @@ function drawFlag(type, selected, hovered, min, max){
 
 // Draw flag when give a overrepresentation(Enrichment) analysis
 function drawEnrichmentFlag(selected, hovered, min, max){
+
+    var percentage;
+    var y;
     var canvas = document.getElementById("legendCanvasFlag");
     var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
@@ -565,8 +567,8 @@ function drawEnrichmentFlag(selected, hovered, min, max){
     //var min = 0.05;
 
     if (selected !== null && selected >= max && selected <= min){
-        var percentage = selected / min;
-        var y = Math.round((percentage * 200) + 5);
+        percentage = selected / min;
+        y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
         ctx.fillRect(10, 0, 30, 200);
         ctx.closePath();
@@ -589,8 +591,8 @@ function drawEnrichmentFlag(selected, hovered, min, max){
         ctx.closePath();
     }
     if (hovered !== null && hovered >= max && hovered <= min) {
-        var percentage = hovered / min;
-        var y = Math.round((percentage * 200) + 5);
+        percentage = hovered / min;
+        y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
         ctx.strokeStyle = colorHighlight;
         ctx.fillStyle = colorHighlight;
@@ -612,6 +614,8 @@ function drawEnrichmentFlag(selected, hovered, min, max){
 
 // Draw flag when give a expression analysis
 function drawExpressionFlag(selected, hovered, min, max){
+    var percentage;
+    var y;
     var canvas = document.getElementById("legendCanvasFlag");
     var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
@@ -620,8 +624,8 @@ function drawExpressionFlag(selected, hovered, min, max){
     ctx.fillStyle = gradient;
 
     if (selected !== null) {
-        var percentage = 1 - ((selected - min) / (max - min));
-        var y = Math.round((percentage *200 ) + 5);
+        percentage = 1 - ((selected - min) / (max - min));
+        y = Math.round((percentage * 200 ) + 5);
         ctx.beginPath();
         ctx.fillRect(10, 0, 30, 200);
         ctx.closePath();
@@ -644,8 +648,8 @@ function drawExpressionFlag(selected, hovered, min, max){
         ctx.closePath();
     }
     if (hovered !== null ) {
-        var percentage = 1 - ((hovered - min) / (max - min));
-        var y = Math.round((percentage * 200 ) + 5);
+        percentage = 1 - ((hovered - min) / (max - min));
+        y = Math.round((percentage * 200 ) + 5);
         ctx.beginPath();
         ctx.strokeStyle = colorHighlight;
         ctx.fillStyle = colorHighlight;
@@ -667,6 +671,9 @@ function drawExpressionFlag(selected, hovered, min, max){
 
 // Draw flag when give a regulation analysis
 function drawRegulationFlag(selected, hovered, min, max){
+
+    var percentage;
+    var y;
     var canvas = document.getElementById("legendCanvasFlag");
     var ctx = canvas.getContext("2d");
     var gradient = ctx.createLinearGradient(10, 0, 30, 200);
@@ -676,8 +683,8 @@ function drawRegulationFlag(selected, hovered, min, max){
     ctx.fillStyle = gradient;
 
     if (selected !== null) {
-        var percentage = ( (selected - max) * (0.90 - 0.10) / (min - max)) + 0.10;
-        var y = Math.round((percentage * 200 ) + 5);
+        percentage = ( (selected - max) * (0.90 - 0.10) / (min - max)) + 0.10;
+        y = Math.round((percentage * 200 ) + 5);
         ctx.beginPath();
         ctx.fillRect(10, 0, 30, 200);
         ctx.closePath();
@@ -695,8 +702,8 @@ function drawRegulationFlag(selected, hovered, min, max){
 
     }
     if (hovered !==null ) {
-        var percentage =( (hovered - max) * (0.90 - 0.10)/(min - max) ) + 0.10;
-        var y = Math.round((percentage *200) + 5);
+        percentage = ( (hovered - max) * (0.90 - 0.10) / (min - max) ) + 0.10;
+        y = Math.round((percentage * 200) + 5);
         ctx.beginPath();
         ctx.strokeStyle = colorHighlight;
         ctx.fillStyle = colorHighlight;
@@ -719,7 +726,7 @@ function drawRegulationFlag(selected, hovered, min, max){
                 "Significantly down regulated"
             ];
 
-            /*  Returns the size of an element and its position relative to the viewport
+            /* Returns the size of an element and its position relative to the viewport
              rect is a DOMRect object with eight position properties
              * */
             var rect = e.target.getBoundingClientRect();
