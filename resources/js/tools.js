@@ -26,6 +26,8 @@ var SPECIES_MAP = {
     //"48898" : "Bos_taurus"
 };
 
+var EXPORT_PIXEL_RATIO=4.0
+
 // Get species id from url and fetch the data file locally
 var speciesData, topSpeciesData, datasetInFoamtree;
 var speciesIdFromUrl = typeof getUrlVars()["species"] !== "undefined" ? getUrlVars()["species"] : 48887;
@@ -762,7 +764,7 @@ function onImageExportWithColorLegend(foamtree) {
     var base64Image = foamtree.get("imageData", {
         format: format,
         quality: 0.9,
-        pixelRatio: 2.0, // Use a value larger than 1, such as 2 to create a higher-resolution image
+        pixelRatio: EXPORT_PIXEL_RATIO, // Use a value larger than 1, such as 2 to create a higher-resolution image
         backgroundColor: "#fff"
     });
 
@@ -816,7 +818,7 @@ function onImageExportNoColorLegend(foamtree) {
     var base64Image = foamtree.get("imageData", {
         format: format,
         quality: 0.9,
-        pixelRatio: 2.0,
+        pixelRatio: EXPORT_PIXEL_RATIO,
         backgroundColor: "#fff"
     });
 
