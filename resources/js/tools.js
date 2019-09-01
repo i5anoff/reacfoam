@@ -39,6 +39,7 @@ var topSpeciesDataLocation = typeof speciesValue !== "undefined" && speciesIdFro
 
 // Get color profile from url
 var colorParam =  getUrlVars()["color"];
+var colorParamUpper = typeof colorParam !== "undefined" && colorParam.toUpperCase().replace(/%20/g,"_") in ColorProfileEnum ? colorParam.toUpperCase().replace(/%20/g,"_") : "COPPER";
 var profileSelected = typeof colorParam !== "undefined" && colorParam.toUpperCase().replace(/%20/g,"_") in ColorProfileEnum ? ColorProfileEnum[colorParam.toUpperCase().replace(/%20/g,"_")] : ColorProfileEnum.COPPER;
 var colorMinExp = ColorProfileEnum.properties[profileSelected].min_exp;
 var colorMaxExp = ColorProfileEnum.properties[profileSelected].max_exp;

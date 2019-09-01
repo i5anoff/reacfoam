@@ -317,6 +317,11 @@ body {
     -moz-box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75);
     box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75);
 }
+
+.adjustExport-button{
+    background-color: #FF7700;
+}
+
 .export-image{
     display: block;
     height: 32px;
