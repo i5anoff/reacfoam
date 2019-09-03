@@ -119,7 +119,7 @@ function foamtreeStarts(groupsData){
     });
 
     // Adjust export button background color when the color profile is COPPER or COPPER PLUS
-    if (colorParamUpper == "COPPER" || colorParamUpper =="COPPER PLUS" ){
+    if (colorParamUpper == "COPPER" || colorParamUpper =="COPPER_PLUS" ){
         $("button[name=export-button]").addClass("adjustExport-button");
     }
 
