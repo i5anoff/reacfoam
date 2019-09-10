@@ -10,7 +10,6 @@
       "Autophagy"
     ],
     "releaseDate": "2019-06-12",
-    "releaseStatus": "NEW",
     "speciesName": "Homo sapiens",
     "doi": "10.3180/r-hsa-1632852.1",
     "hasDiagram": true,
@@ -29,7 +28,6 @@
       "Cell Cycle"
     ],
     "releaseDate": "2011-12-06",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -57,7 +55,7 @@
     "dbId": 8953897,
     "displayName": "Cellular responses to external stimuli",
     "stId": "R-HSA-8953897",
-    "stIdVersion": "R-HSA-8953897.3",
+    "stIdVersion": "R-HSA-8953897.4",
     "isInDisease": false,
     "isInferred": false,
     "name": [
@@ -117,7 +115,6 @@
       "Developmental Biology"
     ],
     "releaseDate": "2011-09-20",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -145,7 +142,7 @@
     "dbId": 1643685,
     "displayName": "Disease",
     "stId": "R-HSA-1643685",
-    "stIdVersion": "R-HSA-1643685.9",
+    "stIdVersion": "R-HSA-1643685.10",
     "isInDisease": true,
     "isInferred": false,
     "name": [
@@ -221,7 +218,6 @@
       "Gene expression (Transcription)"
     ],
     "releaseDate": "2004-07-06",
-    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -277,6 +273,7 @@
       "Metabolism"
     ],
     "releaseDate": "2011-09-20",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": false,
@@ -319,25 +316,6 @@
     "className": "TopLevelPathway"
   },
   {
-    "dbId": 5205647,
-    "displayName": "Mitophagy",
-    "stId": "R-HSA-5205647",
-    "stIdVersion": "R-HSA-5205647.3",
-    "isInDisease": false,
-    "isInferred": false,
-    "name": [
-      "Mitophagy"
-    ],
-    "releaseDate": "2015-09-22",
-    "releaseStatus": "UPDATED",
-    "speciesName": "Homo sapiens",
-    "doi": "10.3180/r-hsa-5205647",
-    "hasDiagram": true,
-    "hasEHLD": false,
-    "schemaClass": "TopLevelPathway",
-    "className": "TopLevelPathway"
-  },
-  {
     "dbId": 397014,
     "displayName": "Muscle contraction",
     "stId": "R-HSA-397014",
@@ -365,6 +343,7 @@
       "Neuronal System"
     ],
     "releaseDate": "2008-06-30",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
@@ -399,6 +378,7 @@
       "Programmed Cell Death"
     ],
     "releaseDate": "2014-12-11",
+    "releaseStatus": "UPDATED",
     "speciesName": "Homo sapiens",
     "hasDiagram": true,
     "hasEHLD": true,
